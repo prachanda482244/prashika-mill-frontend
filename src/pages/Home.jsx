@@ -6,7 +6,6 @@ const Home = () => {
   const getAllProducts = async () => {
     try {
       const { data } = await AxiosInstance.get("/product/get-all-products");
-      console.log(data?.data);
       setProducts(data?.data);
     } catch (error) {
       console.log(error.response.data);
