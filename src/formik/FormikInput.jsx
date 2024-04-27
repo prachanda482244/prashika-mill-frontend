@@ -1,14 +1,21 @@
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Field } from "formik";
-import React from "react";
+import React, { useState } from "react";
 
 const FormikInput = ({ name, label, required, type, ...props }) => {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
+
   return (
     <div>
       <Field name={name}>
         {({ field, form, meta }) => {
           return (
             <div>
-              <div className="flex flex-col p-4 ">
+              <div className="flex relative flex-col p-4 ">
                 <label
                   className="capitalize font-light flex gap-2 text-gray-500"
                   htmlFor={name}
@@ -19,8 +26,14 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
                   </span>
                 </label>
                 <input
-                  className="border-[1px] rounded-sm px-4 py-1"
-                  type={type}
+                  className="border-[1px]  rounded-sm px-4 py-1"
+                  type={
+                    type === "password" && !isPasswordVisible
+                      ? "password"
+                      : "text" && type === "file"
+                      ? "file"
+                      : type
+                  }
                   {...field}
                   {...props}
                   id={name}
@@ -28,12 +41,20 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
                   onChange={field.onChange}
                   autoComplete="off"
                 />
+                {type === "password" && (
+                  <span
+                    onClick={togglePasswordVisibility}
+                    className="absolute top-[50px] cursor-pointer right-10"
+                  >
+                    {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
+                  </span>
+                )}
                 <div className="h-2">
-                  {meta.touched && meta.error ? (
+                  {meta.touched && meta.error && (
                     <div className="text-red-500  text-sm italic">
                       {meta.error}
                     </div>
-                  ) : null}
+                  )}
                 </div>
               </div>
             </div>

@@ -7,13 +7,14 @@ const Home = () => {
     try {
       const { data } = await AxiosInstance.get("/product/get-all-products");
       setProducts(data?.data);
+      console.log(data?.data);
     } catch (error) {
       console.log(error.response.data);
     }
   };
   useEffect(() => {
     getAllProducts();
-  }, []);
+  }, [products]);
   return (
     <div className="flex  items-center border-2 p-4">
       {products?.map((product) => (

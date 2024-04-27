@@ -6,6 +6,8 @@ import {
   registrationValidationSchema,
 } from "../constants/constants";
 import { NavLink } from "react-router-dom";
+import toast from "react-hot-toast";
+import AxiosInstance from "../config/AxiosInstance";
 const LoginForm = () => {
   const initialValues = {
     email: "",
@@ -14,6 +16,13 @@ const LoginForm = () => {
 
   const formSubmit = async (values) => {
     console.log(values);
+    try {
+      const { data } = await AxiosInstance.post("/users/login", values);
+      console.log(data);
+      toast.success(data?.message);
+    } catch (error) {
+      toast(error?.response.data);
+    }
   };
   return (
     <Formik

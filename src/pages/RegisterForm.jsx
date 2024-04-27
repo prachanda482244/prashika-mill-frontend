@@ -2,7 +2,9 @@ import { Form, Formik } from "formik";
 import React from "react";
 import FormikInput from "../formik/FormikInput";
 import { registrationValidationSchema } from "../constants/constants";
-import { NavLink } from "react-router-dom";
+import { NavLink, Navigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import AxiosInstance from "../config/AxiosInstance";
 const RegisterForm = () => {
   const initialValues = {
     username: "",
@@ -11,8 +13,18 @@ const RegisterForm = () => {
     avatar: "",
   };
 
-  const formSubmit = async (values) => {
+  const formSubmit = async (values, { resetForm }) => {
     console.log(values);
+    //     console.log(other);
+    try {
+      const { data } = await AxiosInstance.post("/users/register", values);
+      console.log(data);
+      Navigate("/sign-in");
+      // toast.success(data)
+    } catch (error) {
+      toast.error(error.response.data);
+    }
+    //     resetForm();
   };
   return (
     <Formik
