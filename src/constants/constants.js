@@ -13,12 +13,6 @@ export const navlinks = [
     path: "/sign-in",
     icons: FaRegUser,
   },
-  {
-    id: 3,
-    name: "cart",
-    path: "/cart",
-    icons: FaCartPlus,
-  },
 ];
 
 export const registrationValidationSchema = yup.object({

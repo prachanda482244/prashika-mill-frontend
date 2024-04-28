@@ -1,8 +1,18 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { navlinks } from "../constants/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { FaCartPlus } from "react-icons/fa";
+import { logoutUser } from "../store/slices/authSlice";
 
 const Navbar = () => {
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate("/");
+  };
   return (
     <nav className="flex py-2 items-center border-b-2 border-b-slate-300 px-5 justify-between">
       <div>
@@ -13,7 +23,7 @@ const Navbar = () => {
           Prashika Mel
         </NavLink>
       </div>
-      <div className="flex items-center  w-[40%] gap-2">
+      <div className="flex items-center gap-2">
         <input
           type="search"
           placeholder="Search here"
@@ -23,21 +33,56 @@ const Navbar = () => {
           search
         </button>
       </div>
+
       <ul className="flex items-center  gap-2 p-2">
-        {navlinks.map((link) => (
-          <NavLink
-            key={link.id}
-            to={link.path}
-            className={({ isActive }) =>
-              `${
-                isActive ? "bg-slate-500 text-white border-none " : ""
-              } text-lg flex items-center gap-2 px-2 rounded-lg py-1  shadow-lg uppercase`
-            }
+        {user?.token ? (
+          <div className="flex gap-2 items-center">
+            <NavLink to="/profile">Profile</NavLink>
+            <p className=" ">
+              <img
+                src={user?.userData?.avatar}
+                alt="user"
+                height={50}
+                width={40}
+                className="object-cover shadow-sm rounded-full"
+              />
+            </p>
+          </div>
+        ) : (
+          navlinks.map((link) => (
+            <NavLink
+              key={link.id}
+              to={link.path}
+              className={({ isActive }) =>
+                `${
+                  isActive ? "bg-slate-500 text-white border-none " : ""
+                } text-sm flex items-center gap-2 px-2 rounded-lg py-1  shadow-lg uppercase`
+              }
+            >
+              <span>{<link.icons />}</span>
+              {link.name}
+            </NavLink>
+          ))
+        )}
+        <NavLink
+          to="/cart"
+          className={({ isActive }) =>
+            `${
+              isActive ? "bg-slate-500  text-white border-none " : ""
+            } text-sm flex items-center gap-2 px-2 rounded-lg py-1  border-[1px] uppercase`
+          }
+        >
+          <span>{<FaCartPlus />}</span>
+          Cart
+        </NavLink>
+        {user?.token && (
+          <button
+            className="border-[1px] text-sm flex items-center gap-2 px-2 rounded-lg py-1 uppercase hover:bg-slate-400 hover:text-white"
+            onClick={handleLogout}
           >
-            <span>{<link.icons />}</span>
-            {link.name}
-          </NavLink>
-        ))}
+            Logout
+          </button>
+        )}
       </ul>
     </nav>
   );

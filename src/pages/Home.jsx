@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AxiosInstance from "../config/AxiosInstance";
+import axios from "axios";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -9,12 +10,12 @@ const Home = () => {
       setProducts(data?.data);
       console.log(data?.data);
     } catch (error) {
-      console.log(error.response.data);
+      // console.log(error?.response?.data);
     }
   };
   useEffect(() => {
     getAllProducts();
-  }, [products]);
+  }, []);
   return (
     <div className="flex  items-center border-2 p-4">
       {products?.map((product) => (

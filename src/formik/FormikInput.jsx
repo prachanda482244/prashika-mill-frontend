@@ -30,9 +30,7 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
                   type={
                     type === "password" && !isPasswordVisible
                       ? "password"
-                      : "text" && type === "file"
-                      ? "file"
-                      : type
+                      : "text"
                   }
                   {...field}
                   {...props}

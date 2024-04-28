@@ -1,14 +1,15 @@
 import { Form, Formik } from "formik";
 import React from "react";
 import FormikInput from "../formik/FormikInput";
-import {
-  loginValidationSchema,
-  registrationValidationSchema,
-} from "../constants/constants";
-import { NavLink } from "react-router-dom";
+import { loginValidationSchema } from "../constants/constants";
+import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AxiosInstance from "../config/AxiosInstance";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../store/slices/authSlice";
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const initialValues = {
     email: "",
     password: "",
@@ -18,10 +19,17 @@ const LoginForm = () => {
     console.log(values);
     try {
       const { data } = await AxiosInstance.post("/users/login", values);
-      console.log(data);
+      if (data.statusCode !== 200) return;
+      const userData = data.data.userData;
+      const token = data?.data?.token;
+      const role = userData.role;
+      console.log(userData);
+      dispatch(loginUser({ userData, token, role }));
       toast.success(data?.message);
+      navigate("/profile");
     } catch (error) {
-      toast(error?.response.data);
+      toast.error("Invalid Credentials");
+      console.log(error.response.data);
     }
   };
   return (
@@ -31,7 +39,7 @@ const LoginForm = () => {
       onSubmit={formSubmit}
       enableReinitialize={true}
     >
-      {() => {
+      {({ isSubmitting }) => {
         return (
           <Form autoComplete="nope">
             <h1 className="text-center flex items-center justify-between text-2xl w-1/2 mx-auto p-4  font-light shadow-sm">
@@ -61,6 +69,7 @@ const LoginForm = () => {
               <button
                 type="submit"
                 className="bg-blue-400 px-2 rounded-lg text-white font-semibold shadow-md py-2"
+                disabled={isSubmitting}
               >
                 Submit
               </button>

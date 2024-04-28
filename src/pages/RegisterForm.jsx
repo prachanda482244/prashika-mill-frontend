@@ -5,21 +5,36 @@ import { registrationValidationSchema } from "../constants/constants";
 import { NavLink, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AxiosInstance from "../config/AxiosInstance";
+import FormikFile from "../formik/FormikFile";
 const RegisterForm = () => {
   const initialValues = {
     username: "",
     email: "",
     password: "",
-    avatar: "",
+    avatar: null,
   };
 
   const formSubmit = async (values, { resetForm }) => {
-    console.log(values);
     //     console.log(other);
+
+    const data = {
+      username: values.username,
+      email: values.email,
+      password: values.password,
+      avatar: values.avatar.replace("C://fakepath/", ""),
+    };
+    console.log(data);
     try {
-      const { data } = await AxiosInstance.post("/users/register", values);
+      // const { data } =
+
+      const { data } = await AxiosInstance.post("/users/register", values, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       console.log(data);
-      Navigate("/sign-in");
+      // Navigate("/sign-in");
       // toast.success(data)
     } catch (error) {
       toast.error(error.response.data);
@@ -70,12 +85,7 @@ const RegisterForm = () => {
               </div>
 
               <div className="flex flex-col justify-between pb-2">
-                <FormikInput
-                  type="file"
-                  label="avatar"
-                  required={true}
-                  name="avatar"
-                />
+                <FormikFile label="avatar" required={true} name="avatar" />
                 <button
                   type="submit"
                   className="bg-blue-400 px-2 rounded-lg text-white font-semibold shadow-md py-2"

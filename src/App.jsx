@@ -5,6 +5,8 @@ import RegisterForm from "./pages/RegisterForm";
 import LoginForm from "./pages/LoginForm";
 import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
+import Cart from "./pages/Cart";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -18,7 +20,8 @@ const App = () => {
         <Route path="/sign-in" element={<LoginForm />} />
 
         {/* Protected routes */}
-        <Route path="/cart" element={"Cart "} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </div>
   );
