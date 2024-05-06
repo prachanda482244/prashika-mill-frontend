@@ -1,87 +1,88 @@
-import React from "react";
+import React, { useState } from "react";
+import { CiSearch } from "react-icons/ci";
 import { NavLink, useNavigate } from "react-router-dom";
 import { navlinks } from "../constants/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { FaCartPlus } from "react-icons/fa";
 import { logoutUser } from "../store/slices/authSlice";
+import AxiosInstance from "../config/AxiosInstance";
+import toast from "react-hot-toast";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { RxCross1 } from "react-icons/rx";
 
 const Navbar = () => {
-  const user = useSelector((state) => state.user);
+  const { isLoggedIn, userData } = useSelector((state) => state.user);
+  const [isOpen, setIsOpen] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    setIsOpen((prev) => !prev);
+    const { data } = await AxiosInstance.post("/users/logout", {});
+    toast.success(data?.message);
     dispatch(logoutUser());
     navigate("/");
   };
   return (
-    <nav className="flex py-2 items-center border-b-2 border-b-slate-300 px-5 justify-between">
-      <div>
-        <NavLink
-          className="text-xl text-purple-900 uppercase p-2 rounded-lg shadow-lg"
-          to={"/"}
-        >
-          Prashika Mel
-        </NavLink>
-      </div>
-      <div className="flex items-center gap-2">
-        <input
-          type="search"
-          placeholder="Search here"
-          className=" focus:outline-slate-400 bg-slate-200 w-full rounded-lg px-4 py-1 font-light"
-        />
-        <button className="bg-cyan-500 uppercase font-light text-white py-1 px-4 rounded-lg">
-          search
-        </button>
+    <nav className="flex sm:flex-row flex-col py-2 bg-slate-600 text-slate-300 items-center border-b-2  px-2 sm:px-5 justify-between border-2">
+      <div className="flex items-center  w-full justify-between">
+        <div className="border-[1px] p-[2px] ">
+          <NavLink
+            className="text-xs  sm:text-x uppercase md:p-2  rounded-md"
+            to="/"
+          >
+            Prashika Mel
+          </NavLink>
+        </div>
+
+        <div className="flex items-center md:mr-20  w-[60%] sm:w-auto   relative gap-2">
+          <input
+            type="text"
+            placeholder="Search here"
+            className="py-[1px] sm:text-base text-sm sm:py-1 px-4 w-full rounded-md outline-none"
+          />
+
+          <CiSearch className="absolute right-2   text-slate-600 cursor-pointer text-2xl " />
+        </div>
+        <div className="sm:hidden" onClick={() => setIsOpen((prev) => !prev)}>
+          {isOpen ? (
+            <GiHamburgerMenu className="h-5 w-5 cursor-pointer" />
+          ) : (
+            <RxCross1 className="h-5 w-5 cursor-pointer" />
+          )}
+        </div>
       </div>
 
-      <ul className="flex items-center  gap-2 p-2">
-        {user?.token ? (
-          <div className="flex gap-2 items-center">
-            <NavLink to="/profile">Profile</NavLink>
-            <p className=" ">
-              <img
-                src={user?.userData?.avatar}
-                alt="user"
-                height={50}
-                width={40}
-                className="object-cover shadow-sm rounded-full"
-              />
-            </p>
-          </div>
-        ) : (
-          navlinks.map((link) => (
-            <NavLink
-              key={link.id}
-              to={link.path}
-              className={({ isActive }) =>
-                `${
-                  isActive ? "bg-slate-500 text-white border-none " : ""
-                } text-sm flex items-center gap-2 px-2 rounded-lg py-1  shadow-lg uppercase`
-              }
-            >
-              <span>{<link.icons />}</span>
-              {link.name}
-            </NavLink>
-          ))
-        )}
-        <NavLink
-          to="/cart"
-          className={({ isActive }) =>
-            `${
-              isActive ? "bg-slate-500  text-white border-none " : ""
-            } text-sm flex items-center gap-2 px-2 rounded-lg py-1  border-[1px] uppercase`
-          }
-        >
-          <span>{<FaCartPlus />}</span>
-          Cart
-        </NavLink>
-        {user?.token && (
-          <button
-            className="border-[1px] text-sm flex items-center gap-2 px-2 rounded-lg py-1 uppercase hover:bg-slate-400 hover:text-white"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+      <ul
+        className={`sm:flex sm:flex-row flex-col w-full sm:w-auto   items-center ${
+          isOpen ? "hidden" : "block"
+        }`}
+      >
+        {navlinks.map(
+          (link) =>
+            link.isVisible(isLoggedIn) && (
+              <NavLink
+                key={link.id}
+                to={link.path}
+                className={({ isActive }) =>
+                  `${
+                    isActive ? "text-white" : ""
+                  } text-sm flex hover:text-slate-100 w-full sm:w-auto items-center pr-4 justify-end g1 gap-[1px] capitalize  px-2 rounded-lg py-1  ${
+                    link.name === "profile"
+                      ? "underline underline-offset-4"
+                      : ""
+                  }`
+                }
+                onClick={
+                  link.name === "logout"
+                    ? handleLogout
+                    : () => {
+                        setIsOpen((prev) => !prev);
+                      }
+                }
+              >
+                {link.name === "profile" ? "" : <span>{<link.icons />}</span>}
+                {link.name === "profile" ? userData?.username : link.name}
+              </NavLink>
+            )
         )}
       </ul>
     </nav>

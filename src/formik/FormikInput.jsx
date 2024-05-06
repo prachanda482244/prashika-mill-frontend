@@ -26,7 +26,7 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
                   </span>
                 </label>
                 <input
-                  className="border-[1px]  rounded-sm px-4 py-1"
+                  className="border-[1px] rounded-sm px-4 py-1"
                   type={
                     type === "password" && !isPasswordVisible
                       ? "password"

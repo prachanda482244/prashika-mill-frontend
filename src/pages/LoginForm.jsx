@@ -26,6 +26,9 @@ const LoginForm = () => {
       console.log(userData);
       dispatch(loginUser({ userData, token, role }));
       toast.success(data?.message);
+      if (userData?.role === "admin") {
+        navigate("/dashboard");
+      }
       navigate("/profile");
     } catch (error) {
       toast.error("Invalid Credentials");
@@ -69,9 +72,8 @@ const LoginForm = () => {
               <button
                 type="submit"
                 className="bg-blue-400 px-2 rounded-lg text-white font-semibold shadow-md py-2"
-                disabled={isSubmitting}
               >
-                Submit
+                {isSubmitting ? "loading" : "login"}
               </button>
             </div>
           </Form>
