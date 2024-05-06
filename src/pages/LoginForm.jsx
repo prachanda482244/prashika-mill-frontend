@@ -55,7 +55,7 @@ const LoginForm = () => {
                 here
               </span>
             </h1>
-            <div className="flex flex-col md:flex-row flex-wrap justify-between  md:w-2/3 mx-auto md:mt-5 md:p-4 rounded-md shadow-xl">
+            <div className="flex flex-col flex-wrap justify-between  md:w-2/3 mx-auto md:mt-5 md:p-4 rounded-md shadow-xl">
               <FormikInput
                 type="email"
                 label="email"
