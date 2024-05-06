@@ -45,9 +45,9 @@ const LoginForm = () => {
       {({ isSubmitting }) => {
         return (
           <Form autoComplete="nope">
-            <h1 className="text-center flex items-center justify-between text-2xl w-1/2 mx-auto p-4  font-light shadow-sm">
+            <h1 className="text-center flex items-center justify-between sm:text-lg text-sm md:w-2/3 sm:mx-auto py-1 md:p-4 font-light border-2 w-full shadow-sm">
               Welcome to Prashika-Mel ! Login{" "}
-              <span className="text-base">
+              <span className="sm:text-base">
                 New member ?{" "}
                 <NavLink to={"/sign-up"} className="text-blue-500">
                   register{" "}
@@ -55,7 +55,7 @@ const LoginForm = () => {
                 here
               </span>
             </h1>
-            <div className="flex flex-col flex-wrap justify-between w-1/2 mx-auto mt-5 p-4 rounded-md shadow-xl">
+            <div className="flex flex-col md:flex-row flex-wrap justify-between  md:w-2/3 mx-auto md:mt-5 md:p-4 rounded-md shadow-xl">
               <FormikInput
                 type="email"
                 label="email"
@@ -71,7 +71,7 @@ const LoginForm = () => {
 
               <button
                 type="submit"
-                className="bg-blue-400 px-2 rounded-lg text-white font-semibold shadow-md py-2"
+                className="bg-blue-400 px-2 rounded-lg text-white font-semibold shadow-md py-2 mx-2"
               >
                 {isSubmitting ? "loading" : "login"}
               </button>

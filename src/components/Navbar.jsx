@@ -24,7 +24,7 @@ const Navbar = () => {
   return (
     <nav className="flex sm:flex-row flex-col py-2 bg-slate-600 text-slate-300 items-center border-b-2  px-2 sm:px-5 justify-between border-2">
       <div className="flex items-center  w-full justify-between">
-        <div className="border-[1px] p-[2px] ">
+        <div className=" p-[2px] ">
           <NavLink
             className="text-xs  sm:text-x uppercase md:p-2  rounded-md"
             to="/"

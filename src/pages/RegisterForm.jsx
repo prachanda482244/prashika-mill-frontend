@@ -9,7 +9,6 @@ import FormikFile from "../formik/FormikFile";
 
 const RegisterForm = () => {
   const [file, setFile] = useState();
-  console.log(file.name);
   const initialValues = {
     username: "",
     email: "",
@@ -51,9 +50,9 @@ const RegisterForm = () => {
     >
       {() => (
         <Form autoComplete="nope">
-          <h1 className="text-center flex items-center justify-between text-2xl w-2/3 mx-auto p-4 font-light shadow-sm">
+          <h1 className="text-center flex items-center justify-between sm:text-lg text-sm md:w-2/3 sm:mx-auto py-1 md:p-4 font-light border-2 w-full shadow-sm">
             Create your mel account! Register{" "}
-            <span className="text-base">
+            <span className="sm:text-base">
               Already a member?{" "}
               <NavLink to={"/sign-in"} className="text-blue-500">
                 login here
@@ -61,8 +60,8 @@ const RegisterForm = () => {
             </span>
           </h1>
 
-          <div className="flex flex-wrap justify-between w-2/3 mx-auto mt-5 p-4 rounded-md shadow-xl">
-            <div className="flex flex-col w-1/2">
+          <div className="flex flex-col md:flex-row flex-wrap justify-between  md:w-2/3 mx-auto md:mt-5 md:p-4 rounded-md shadow-xl">
+            <div className="flex flex-col md:w-1/2">
               <FormikInput
                 type="text"
                 label="Username"
@@ -83,7 +82,7 @@ const RegisterForm = () => {
               />
             </div>
 
-            <div className="flex flex-col justify-between pb-2">
+            <div className="flex flex-col md:w-1/2 w-full justify-between pb-2">
               <FormikFile
                 name="avatar"
                 label="Upload your image"
@@ -91,7 +90,7 @@ const RegisterForm = () => {
               />
               <button
                 type="submit"
-                className="bg-blue-400 px-2 rounded-lg text-white font-semibold shadow-md py-2"
+                className="bg-blue-400 px-2 mx-4 rounded-lg text-white font-semibold shadow-md py-2"
               >
                 Submit
               </button>

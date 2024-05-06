@@ -71,9 +71,9 @@ const Home = () => {
   const getAllProducts = async () => {
     try {
       setIsLoading(true);
-      // const { data } = await AxiosInstance.get("/product/get-all-products");
-      // console.log(data.data);
-      // setProducts(data?.data);
+      const { data } = await AxiosInstance.get("/product/get-all-products");
+      console.log(data.data);
+      setProducts(data?.data);
       setIsLoading(false);
     } catch (error) {
       // console.log(error?.response?.data);
@@ -85,7 +85,7 @@ const Home = () => {
   }, []);
   if (isLoading) return <Loader />;
   return (
-    <div className="grid sm:grid-cols-3 grid-cols-1 gap-2 p-10 items-center border-2 border-red-500  ">
+    <div className="grid sm:grid-cols-3 grid-cols-1 gap-2 p-2 sm:p-10 items-center border-2 border-red-500  ">
       {products?.map((product) => (
         <NavLink
           to={`/product/${product._id}`}
