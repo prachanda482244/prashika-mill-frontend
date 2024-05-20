@@ -9,19 +9,18 @@ const initialState = {
 };
 export const fetchCartData = createAsyncThunk("cart/item", async () => {
   const { data } = await AxiosInstance.get("/cart", { withCredentials: true });
-  console.log(data);
-  return data;
+  console.log("fetched cart data for user", data);
+  return data.data;
 });
 
 export const addToCart = createAsyncThunk(
   "cart/add-to-cart",
   async (productId, product) => {
-    const { data } = await AxiosInstance.post(
+    await AxiosInstance.post(
       `/cart/add-to-cart/${productId}`,
       { product },
       { withCredentials: true }
     );
-    return data;
   }
 );
 
@@ -36,6 +35,12 @@ export const removeFromCart = createAsyncThunk(
     return data;
   }
 );
+export const clearCart = createAsyncThunk("cart/clear", async () => {
+  const { data } = await AxiosInstance.delete("/clear-cart", {
+    withCredentials: true,
+  });
+  return data.data.message;
+});
 
 const cartSlice = createSlice({
   name: "cartSlice",
@@ -60,6 +65,9 @@ const cartSlice = createSlice({
       })
       .addCase(removeFromCart.fulfilled, (state, action) => {
         state.cartItems = action.payload;
+      })
+      .addCase(clearCart.fulfilled, (state) => {
+        state.cartItems = [];
       });
   },
 });

@@ -4,9 +4,11 @@ import toast from "react-hot-toast";
 import Loader from "../components/Loader";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../store/slices/cartSlice";
+import { addToCart, fetchCartData } from "../store/slices/cartSlice";
 const Home = () => {
   const message = useSelector((state) => state.cart.message);
+  const { isLoggedIn } = useSelector((state) => state.user);
+  const { status } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const [products, setProducts] = useState([
     // {
@@ -74,8 +76,12 @@ const Home = () => {
 
   useEffect(() => {
     getAllProducts();
-  }, []);
+    if (isLoggedIn) {
+      dispatch(fetchCartData());
+    }
+  }, [isLoggedIn, dispatch]);
   if (isLoading) return <Loader />;
+
   return (
     <div className="grid sm:grid-cols-3 grid-cols-1 gap-2 p-2 sm:p-10 items-center border-2 border-red-500  ">
       {products?.map((product) => (

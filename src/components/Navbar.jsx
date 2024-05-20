@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { NavLink, useNavigate } from "react-router-dom";
 import { navlinks } from "../constants/constants";
@@ -86,7 +86,7 @@ const Navbar = () => {
                 {link.name === "profile" ? userData?.username : link.name}
                 {link.name === "cart" ? (
                   <span className="absolute bg-red-300 text-white h-5 w-5 text-center rounded-full -top-1 -right-1">
-                    {cartItems.data.products.length}
+                    {cartItems ? cartItems?.products.length : 0}
                   </span>
                 ) : null}
               </NavLink>
