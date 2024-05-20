@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Form, Formik } from "formik";
 import FormikInput from "../formik/FormikInput";
 import { registrationValidationSchema } from "../constants/constants";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AxiosInstance from "../config/AxiosInstance";
 import FormikFile from "../formik/FormikFile";
 
 const RegisterForm = () => {
   const [file, setFile] = useState();
+  const navigate = useNavigate();
   const initialValues = {
     username: "",
     email: "",
@@ -31,10 +32,10 @@ const RegisterForm = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Response:", data?.data);
-      if (data?.data.statusCode !== 201) return;
+      console.log("Response:", data?.data.statusCode);
+      if (data?.statusCode !== 201) return;
       toast.success("Registration successful");
-      Navigate("/sign-in");
+      navigate("/sign-in");
     } catch (error) {
       toast.error(error.response.data);
       console.error(error);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { NavLink, useNavigate } from "react-router-dom";
 import { navlinks } from "../constants/constants";
@@ -11,6 +11,8 @@ import { RxCross1 } from "react-icons/rx";
 
 const Navbar = () => {
   const { isLoggedIn, userData } = useSelector((state) => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
+  console.log(cartItems);
   const [isOpen, setIsOpen] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -21,8 +23,9 @@ const Navbar = () => {
     dispatch(logoutUser());
     navigate("/");
   };
+
   return (
-    <nav className="flex sm:flex-row flex-col py-2 bg-slate-600 text-slate-300 items-center border-b-2  px-2 sm:px-5 justify-between border-2">
+    <nav className="flex sticky top-0 sm:flex-row flex-col py-2 bg-slate-600 text-slate-300 items-center border-b-2  px-2 sm:px-5 justify-between border-2">
       <div className="flex items-center  w-full justify-between">
         <div className=" p-[2px] ">
           <NavLink
@@ -52,7 +55,7 @@ const Navbar = () => {
       </div>
 
       <ul
-        className={`sm:flex sm:flex-row flex-col w-full sm:w-auto   items-center ${
+        className={`sm:flex sm:flex-row flex-col ws-full sm:w-96   items-center ${
           isOpen ? "hidden" : "block"
         }`}
       >
@@ -65,7 +68,7 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `${
                     isActive ? "text-white" : ""
-                  } text-sm flex hover:text-slate-100 w-full sm:w-auto items-center pr-4 justify-end g1 gap-[1px] capitalize  px-2 rounded-lg py-1  ${
+                  } text-sm flex hover:text-slate-100 relative w-full sm:w-auto items-center pr-4 justify-end g1 gap-[1px] capitalize  px-2 rounded-lg py-1  ${
                     link.name === "profile"
                       ? "underline underline-offset-4"
                       : ""
@@ -81,6 +84,11 @@ const Navbar = () => {
               >
                 {link.name === "profile" ? "" : <span>{<link.icons />}</span>}
                 {link.name === "profile" ? userData?.username : link.name}
+                {link.name === "cart" ? (
+                  <span className="absolute bg-red-300 text-white h-5 w-5 text-center rounded-full -top-1 -right-1">
+                    {cartItems.data.products.length}
+                  </span>
+                ) : null}
               </NavLink>
             )
         )}
