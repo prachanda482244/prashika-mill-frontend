@@ -56,6 +56,7 @@ const Home = () => {
     //   ],
     // },
   ]);
+  console.log(message)
   const [isLoading, setIsLoading] = useState(false);
   const getAllProducts = async () => {
     try {
@@ -70,10 +71,11 @@ const Home = () => {
   };
 
   const handleAddToCart = (product) => {
+    console.log(product)
     dispatch(addToCart(product._id));
     toast.success(message);
   };
-
+console.log(products)
   useEffect(() => {
     getAllProducts();
     if (isLoggedIn) {
