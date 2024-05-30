@@ -77,57 +77,58 @@ const Home = () => {
   };
 console.log(products)
   useEffect(() => {
-    getAllProducts();
+    // getAllProducts();
     if (isLoggedIn) {
       dispatch(fetchCartData());
     }
   }, [isLoggedIn, dispatch]);
-  if (isLoading) return <Loader />;
+  // if (isLoading) return <Loader />;
 
   return (
-    <div className="grid sm:grid-cols-3 grid-cols-1 gap-2 p-2 sm:p-10 items-center border-2 border-red-500  ">
-      {products?.map((product) => (
-        <div
-          key={product._id}
-          className="flex flex-col border-[1px] border-slate-600 rounded-md cursor-pointer  gap-2"
-        >
-          <NavLink to={`/product/${product._id}`}>
-            <div className=" h-52 flex items-center justify-center">
-              <img
-                src={product.images[0]?.url}
-                height={200}
-                width={200}
-                alt="product"
-                className="h-52 w-40 p-2 rounded-lg object-cover"
-              />
-            </div>
-          </NavLink>
+    <div></div>
+    // <div className="grid sm:grid-cols-3 grid-cols-1 gap-2 p-2 sm:p-10 items-center border-2  ">
+    //   {products?.map((product) => (
+    //     <div
+    //       key={product._id}
+    //       className="flex flex-col border-[1px] border-slate-600 rounded-md cursor-pointer  gap-2"
+    //     >
+    //       <NavLink to={`/product/${product._id}`}>
+    //         <div className=" h-52 flex items-center justify-center">
+    //           <img
+    //             src={product.images[0]?.url}
+    //             height={200}
+    //             width={200}
+    //             alt="product"
+    //             className="h-52 w-40 p-2 rounded-lg object-cover"
+    //           />
+    //         </div>
+    //       </NavLink>
 
-          <p className="text-slate-500 text-center text-lg">{product.title}</p>
-          <div className="flex  text-sm text-orange-400 justify-between px-4 items-center">
-            <p className=" ">
-              <span>Rs: </span>
-              {product.price}
-            </p>
-            <p>
-              <span>Quantity: </span>
-              {product.quantity}
-            </p>
-          </div>
-          <div className="flex items-center justify-between p-5">
-            <button className="border-[1px] border-blue-500 font-semibold text-slate-500 py-2 px-6 rounded-md">
-              order now
-            </button>
-            <button
-              className="bg-blue-500 text-slate-200 px-6 py-2 rounded-md"
-              onClick={() => handleAddToCart(product)}
-            >
-              add to cart
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
+    //       <p className="text-slate-500 text-center text-lg">{product.title}</p>
+    //       <div className="flex  text-sm text-orange-400 justify-between px-4 items-center">
+    //         <p className=" ">
+    //           <span>Rs: </span>
+    //           {product.price}
+    //         </p>
+    //         <p>
+    //           <span>Quantity: </span>
+    //           {product.quantity}
+    //         </p>
+    //       </div>
+    //       <div className="flex items-center justify-between p-5">
+    //         <button className="border-[1px] border-blue-500 font-semibold text-slate-500 py-2 px-6 rounded-md">
+    //           order now
+    //         </button>
+    //         <button
+    //           className="bg-blue-500 text-slate-200 px-6 py-2 rounded-md"
+    //           onClick={() => handleAddToCart(product)}
+    //         >
+    //           add to cart
+    //         </button>
+    //       </div>
+    //     </div>
+    //   ))}
+    // </div>
   );
 };
 

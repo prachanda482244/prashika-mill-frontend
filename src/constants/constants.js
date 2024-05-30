@@ -1,48 +1,69 @@
+import { CgProductHunt } from "react-icons/cg";
 import {
-  FaCartPlus,
   FaRegUser,
-  FaHouseUser,
   FaFacebook,
   FaTwitter,
   FaInstagram,
   FaLinkedin,
 } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
+import { GiShoppingBag } from "react-icons/gi";
 
 import * as yup from "yup";
-export const navlinks = [
+export const navlinks_1=[
   {
-    id: 1,
-    name: "register",
-    path: "/sign-up",
-    icons: FaHouseUser,
-    isVisible: (isLoggedIn) => !isLoggedIn,
+    id:1,
+    name:"Shop",
+    path:"/products",
   },
   {
+    id:2,
+    name:"Our story",
+    path:"/about"
+  },
+  {
+    id:3,
+    name:"Blog",
+    path:"/blog"
+  },
+  {
+    id:4,
+    name:"Contact",
+    path:"/contact"
+  }
+]
+export const navlinks_2 = [
+  // {
+  //   id: 1,
+  //   name: "register",
+  //   path: "/sign-up",
+  //   icons: FaHouseUser,
+  //   isVisible: (isLoggedIn) => !isLoggedIn,
+  // },
+  {
     id: 2,
-    name: "login",
+    name: "Log in",
     path: "/sign-in",
     icons: FaRegUser,
     isVisible: (isLoggedIn) => !isLoggedIn,
-  },
+  }, 
   {
     id: 3,
     name: "profile",
     path: "/profile",
-    icons: FaCartPlus,
+    icons: CgProductHunt,
     isVisible: (isLoggedIn) => isLoggedIn,
   },
-
   {
-    id: 4,
-    name: "cart",
+    id: 5,
+    name: "",
     path: "/cart",
-    icons: FaCartPlus,
-    isVisible: (isLoggedIn) => isLoggedIn,
+    icons: GiShoppingBag,
+    isVisible: () => true,
   },
   {
     id: 6,
-    name: "logout",
+    name: "",
     path: "/  ",
     icons: FiLogOut,
     isVisible: (isLoggedIn) => isLoggedIn,
