@@ -49,8 +49,10 @@ const Navbar = () => {
         </div>
 
         <div className="flex relative items-center gap-2">
-          <input type="text" placeholder="Search..." className="w-60   border-b-2 mr-8 border-black px-8 hover:border-2 outline-none py-2" />
+
+          <input type="text" placeholder="Search..." className="w-60   border-b-2 mr-8 border-black px-8 hover:border-2 outline-none py-2 placeholder:text-black" />
             <CiSearch  className="absolute left-0 text-2xl " />
+
           <ul
             className={`sm:flex sm:flex-row flex-col gap-3 text-xl items-center ${
               isOpen ? "hidden" : "block"
@@ -75,7 +77,7 @@ const Navbar = () => {
                     }
                   >
                     <div className="relative">
-                    {link.name === "profile" ? "" : <span className={` ${link.id!==5?'text-lg':'text-[40px] bg-transparent text-black'} flex items-center justify-center bg-gray-500 rounded-full text-white p-3 `}>{<link.icons />}</span>}
+                    {link.name === "profile" ? "" : <span className={` ${link.id!==5? 'text-lg':'text-xl  text-black'} flex items-center justify-center bg-gray-500 rounded-full text-white p-3 `}>{<link.icons />}</span>}
                     {link.id === 5 ? (
                       <span className="absolute text-xs  text-white h-5 w-5 text-center rounded-full top-7 font-bold left-5">
                         {cartItems ? cartItems?.products?.length : 0}
