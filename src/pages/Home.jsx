@@ -1,9 +1,15 @@
+import { Link } from 'react-router-dom';
 import backgroundImg from '../assets/bg-img-3.jpg'
+import Favourites from './Favourites';
+import Button from '../components/Button';
+import MostPopular from './MostPopular';
 const Home = () => {
   
   return (
+    <div>
+
     <div
-    className='flex justify-between py-4'
+    className="flex justify-between py-4 bg-cover bg-center h-96 w-full "
      style={{backgroundImage:`url(${backgroundImg})`,
       backgroundSize: 'cover',
       backgroundPosition: 'cover',
@@ -11,8 +17,9 @@ const Home = () => {
       width: "full",
       opacity:.8,
       backgroundRepeat:"no-repeat",
-    }}>
-<div className='flex w-full gap-2 flex-col font-semibold text-white items-center justify-center '>
+    }}
+    >
+<div className='flex w-full gap-2 flex-col font-semibold text-white items-center justify-center ' style={{textShadow:'2px 2px 5px purple'}}>
   <div className=' p-3 flex flex-col'>
   <p className='text-4xl w-full'>Organic Rice and 
   <span className="text-black">
@@ -27,11 +34,15 @@ const Home = () => {
   <p className='text-6xl'>INTENDED</p>
   </div>
   <div className='flex justify-start'>
-  <button className=' py-2 bg-gray-500 font-normal px-10 text-center'>Shop Now</button>
+    <Button to="/products" name="Shop now"/>
   </div>
 
 </div>
       </div> 
+<Favourites/>
+<MostPopular/>
+    </div>
+
   );
 };
 

@@ -33,7 +33,7 @@ const App = () => {
           <Route path="/dashboard" element={"Dashboard component"} />
         </Route>
       </Routes>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };
