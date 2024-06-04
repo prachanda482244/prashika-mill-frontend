@@ -11,7 +11,7 @@ const OurStory = () => {
       </div>
       <div className="relative py-20">
             <img src={backgroundUser} className="w-[1000px] object-cover object-right-top opacity-95 h-[500px]" alt="User" />
-            <img src={userImg} className="h-[500px] absolute top-40 left-72 w-[450px] object-cover" alt="User image" />
+            <img src={userImg} className="h-[500px] absolute top-60 left-72 w-[450px] object-cover" alt="User image" />
       </div>
     </div>
   )

@@ -115,3 +115,42 @@ export const icons = [
     name: FaLinkedin,
   },
 ];
+
+export const footerLinks = [
+
+  {
+    id:1,
+    name:'Rice',
+    to:"/rice"
+  },
+  {
+    id:2,
+    name:"Maize",
+    to:"/maize"
+  },
+  {
+    id:3,
+    name:"Terms and condition",
+    to:"/terms-and-condition"
+  },
+  {
+    id:4,
+    name:"Privacy policy",
+    to:"/privacy-policy"
+  },
+  {
+    id:5,
+    name:"Shipping and returns",
+    to:"/shipping-and-returns"
+  },
+  {
+    id:6,
+    name:"Our story",
+    to:"/blog"
+  },
+  {
+    id:7,
+    name:"Contact us",
+    to:"/contact"
+  }
+]
