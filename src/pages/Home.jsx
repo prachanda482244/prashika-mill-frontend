@@ -3,6 +3,8 @@ import backgroundImg from '../assets/bg-img-3.jpg'
 import Favourites from './Favourites';
 import Button from '../components/Button';
 import MostPopular from './MostPopular';
+import OurStory from './OurStory';
+import Blog from './Blog';
 const Home = () => {
   
   return (
@@ -41,6 +43,8 @@ const Home = () => {
       </div> 
 <Favourites/>
 <MostPopular/>
+<OurStory/>
+<Blog/>
     </div>
 
   );
