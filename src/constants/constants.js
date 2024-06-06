@@ -1,3 +1,4 @@
+import { AiFillBank } from "react-icons/ai";
 import { CgProductHunt } from "react-icons/cg";
 import {
   FaRegUser,
@@ -5,9 +6,11 @@ import {
   FaTwitter,
   FaInstagram,
   FaLinkedin,
+  FaUserFriends,
 } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { GiShoppingBag } from "react-icons/gi";
+import { MdProductionQuantityLimits } from "react-icons/md";
 
 import * as yup from "yup";
 export const navlinks_1=[
@@ -153,4 +156,26 @@ export const footerLinks = [
     name:"Contact us",
     to:"/contact"
   }
+]
+
+export const dashSidebar=[
+  {
+    id:1,
+    name:"Products",
+    icon:MdProductionQuantityLimits,
+    link:"/dashboard/products"
+  },
+  {
+    id:2,
+    name:"Customer",
+    icon:FaUserFriends,
+    link:"/dashboard/customers"
+  },
+  {
+    id:3,
+    name:"Order",
+    icon:AiFillBank,
+    link:"/dashboard/orders"
+  }
+
 ]

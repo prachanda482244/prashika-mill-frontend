@@ -41,7 +41,7 @@ const MostPopular = () => {
       <h1 className="text-4xl uppercase tracking-widest font-light  py-10">Most Popular</h1>
       <div className="grid  sm:grid-cols-3 w-full px-40 gap-7 ">
         {
-          products?.map(product=>(
+          products.slice(0,3)?.map(product=>(
       <div className="mt-10" key={product._id}>
          <NavLink className="flex flex-col gap-5 " to={`/product/${product._id}`}>
             <div className="bg-white rounded-sm flex items-center justify-center px-20 py-40">

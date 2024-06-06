@@ -6,23 +6,14 @@ const ProtectedRoutes = ({ requiredRole = "customer" }) => {
   const { role, isLoggedIn } = useSelector((state) => state.user);
   const isAuthenticated = isLoggedIn && role === requiredRole;
 
-  // return isAuthenticated ? (
-  //   <Outlet />
-  // ) : role === requiredRole ? (
-  //   Navigate({ to: "/sign-in" })
-  // ) : (
-  //   Navigate({ to: "/unauthorized" })
-  // );
+  if (!isLoggedIn) {
+    return <Navigate to="/sign-in" />;
+  }
 
-  if (!isAuthenticated) {
-    Navigate({ to: "/sign-in" });
+  if (role !== requiredRole) {
+    return <Navigate to="/unauthorized" />;
   }
-  if (role === "admin") {
-    Navigate({ to: "/dashboard" });
-  }
-  if (role !== "admin" && !isAuthenticated) {
-    Navigate({ to: "/unauthorized" });
-  }
+
   return <Outlet />;
 };
 
