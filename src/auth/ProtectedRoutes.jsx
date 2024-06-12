@@ -10,7 +10,7 @@ const ProtectedRoutes = ({ requiredRole = "customer" }) => {
     return <Navigate to="/sign-in" />;
   }
 
-  if (role !== requiredRole) {
+  if (requiredRole !== "admin") {
     return <Navigate to="/unauthorized" />;
   }
 

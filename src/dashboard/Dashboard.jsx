@@ -25,7 +25,7 @@ const Dashboard = () => {
       <DashNavBar />
       <div className="flex ">
         <DashSideBar />
-        <div className="flex-grow py-10  border bg-slate-100  p-4">
+        <div className="flex-grow border  p-4">
           <Outlet />
         </div>
       </div>
