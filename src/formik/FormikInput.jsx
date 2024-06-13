@@ -17,7 +17,7 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
             <div>
               <div className="flex relative flex-col p-4 ">
                 <label
-                  className="capitalize font-light flex gap-2 text-gray-500"
+                  className="capitalize tracking-wide font-medium flex gap-2 text-gray-500"
                   htmlFor={name}
                 >
                   {label}

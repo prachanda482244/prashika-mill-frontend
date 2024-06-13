@@ -13,6 +13,8 @@ import SingleProduct from "./components/SingleProduct";
 import Dashboard from "./dashboard/Dashboard";
 import DashboardProduct from "./dashboard/components/DashboardProduct";
 import DashboardUser from "./dashboard/components/DashboardUser";
+import CreateProduct from "./dashboard/components/CreateProduct";
+import EditProduct from "./dashboard/components/EditProduct";
 
 const App = () => {
   const location = useLocation();
@@ -37,7 +39,10 @@ const App = () => {
 
         <Route element={<ProtectedRoutes requiredRole="admin" />}>
             <Route path="/dashboard/*" element={<Dashboard />}>
-              <Route path="products" element={<DashboardProduct/>} />
+            <Route path="products" element={<DashboardProduct/>}/>
+            <Route path="products/create" element={<CreateProduct/>}/>
+            <Route path="products/edit/:productId" element={<EditProduct/>}/>
+
               <Route path="customers" element={<DashboardUser/>} />
               <Route path="orders" element={"Orders"} />
             </Route>

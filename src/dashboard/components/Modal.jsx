@@ -1,6 +1,6 @@
 import {  useState } from "react"
 import { useDispatch } from "react-redux"
-import { setModalValue, setModalValueFalse } from "../../store/slices/modelSlice"
+import { setModalValue, setModalValueFalse } from "../../store/slices/modalSlice"
 
 const Modal = () => {
       const dispatch = useDispatch()

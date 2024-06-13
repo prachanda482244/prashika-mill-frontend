@@ -100,6 +100,14 @@ export const loginValidationSchema = yup.object({
     .required("Password is required"),
 });
 
+export const productValidationSchema = yup.object({
+  title:yup.string().min(3,"Title should be more than 3 character").required("Title is required"),
+  price:yup.number().required("Price is required"),
+  quantity:yup.number().required("Quantity is required"),
+  description:yup.string().min(10,"Description should be 10 character long").required("description is required"),
+  image: yup.mixed()
+})
+
 export const icons = [
   {
     id: 1,

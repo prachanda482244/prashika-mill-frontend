@@ -5,7 +5,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Defaults to localStorage for web
 import authSlice from "./slices/authSlice";
 import cartSlice from "./slices/cartSlice";
-import modelSlice from "./slices/modelSlice";
+import modelSlice from "./slices/modalSlice";
 
 const rootReducer = combineReducers({ user: authSlice, cart: cartSlice,modal:modelSlice });
 
