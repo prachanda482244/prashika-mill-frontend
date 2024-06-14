@@ -45,6 +45,8 @@ const App = () => {
 
               <Route path="customers" element={<DashboardUser/>} />
               <Route path="orders" element={"Orders"} />
+              <Route path="inventory" element={"Inventory"} />
+              <Route path="blogs" element={"blogs"} />
             </Route>
           </Route>
 </Routes>

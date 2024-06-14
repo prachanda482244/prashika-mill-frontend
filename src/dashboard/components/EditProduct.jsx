@@ -24,33 +24,18 @@ const {productId} = useParams()
       useEffect(()=>{
             fetchSingleProduct()
       },[])
-      console.log(product)
-  const initialValues = {
+    const initialValues = {
       title:product.title,
       price:product.price,
       quantity:product.quantity,
       description:product.description
 }
 
-  const formSubmit = async (values, { resetForm }) => {
-      console.log(values)
-      const formData = new FormData();
-      formData.append("title", values.title);
-      formData.append("description", values.description);
-      formData.append("price", parseInt(values.price));
-      formData.append("quantity", parseInt(values.quantity));
-
-      console.log(formData,"formdata");
-      const {data} = await AxiosInstance.patch(`/dashboard/product/update-product-details/${productId}`,formData,{
-            headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-      })
+  const formSubmit = async (values) => {
+      const {data} = await AxiosInstance.patch(`/dashboard/product/update-product-details/${productId}`,values)
             if(data.statusCode==200){
-                  toast.success(data.message)
+               toast.success(data.message)
             }
-            console.log(data)
-  console.log(values)
   };
 
   return (

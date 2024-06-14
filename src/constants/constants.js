@@ -7,10 +7,11 @@ import {
   FaInstagram,
   FaLinkedin,
   FaUserFriends,
+  FaBloggerB,
 } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { GiShoppingBag } from "react-icons/gi";
-import { MdProductionQuantityLimits } from "react-icons/md";
+import { MdOutlineInventory2, MdProductionQuantityLimits } from "react-icons/md";
 
 import * as yup from "yup";
 export const navlinks_1=[
@@ -184,6 +185,18 @@ export const dashSidebar=[
     name:"Order",
     icon:AiFillBank,
     link:"/dashboard/orders"
+  },
+  {
+    id:4,
+    name:"Inventory",
+    icon:MdOutlineInventory2    ,
+    link:"/dashboard/inventory"
+  },
+  {
+    id:5,
+    name:"Blogs",
+    icon:FaBloggerB,
+    link:"/dashboard/blogs"
   }
 
 ]

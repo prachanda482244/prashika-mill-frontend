@@ -15,8 +15,6 @@ const DashboardProduct = () => {
    if(deleteProduct){
     const {data} = await AxiosInstance.delete(`/dashboard/product/delete-product/${id}`)
     toast.success(data.message)
-     }else{
-      toast.error("Failed to delete product")
      }
   }
   useEffect(()=>{
