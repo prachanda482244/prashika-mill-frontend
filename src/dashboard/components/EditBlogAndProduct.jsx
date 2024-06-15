@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import FormikInput from "../../formik/FormikInput";
-import FormikFile from "../../formik/FormikFile";
-import { productValidationSchema } from "../../constants/constants";
+import { blogValidationSchema, productValidationSchema } from "../../constants/constants";
 import AxiosInstance from "../../config/AxiosInstance";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import FormikTextarea from "../../formik/FormikTextArea";
 
-const EditProduct = () => {
+const EditBlogAndProduct = ({isProduct=false}) => {
+      const {id} = useParams()
       const [product,setProduct] = useState({})
-const {productId} = useParams()
+      const blogUrl = `/blog/get-single-blog/${id}`
+      const productUrl = `/product/get-single-product/${id}`
+
+      const blogUpdateUrl = `/blog/update-blog/${id}`
+      const productUpdateUrl = `/dashboard/product/update-product-details/${id}`
       const fetchSingleProduct = async()=>{
            try {
-             const {data} = await AxiosInstance.get(`/product/get-single-product/${productId}`)
+             const {data} = await AxiosInstance.get(isProduct?productUrl:blogUrl)
              if(data.statusCode===200){
                    setProduct(data.data)
              }
@@ -24,15 +29,21 @@ const {productId} = useParams()
       useEffect(()=>{
             fetchSingleProduct()
       },[])
-    const initialValues = {
+    const productInitialValues = {
       title:product.title,
       price:product.price,
+
       quantity:product.quantity,
+      description:product.description
+}
+const blogInitialValues={
+      title:product.title,
       description:product.description
 }
 
   const formSubmit = async (values) => {
-      const {data} = await AxiosInstance.patch(`/dashboard/product/update-product-details/${productId}`,values)
+      console.log(values)
+      const {data} = await AxiosInstance.patch(isProduct?productUpdateUrl:blogUpdateUrl,values)
             if(data.statusCode==200){
                toast.success(data.message)
             }
@@ -40,44 +51,56 @@ const {productId} = useParams()
 
   return (
     <Formik
-      initialValues={initialValues}
-      validationSchema={productValidationSchema}
+      initialValues={isProduct?productInitialValues:blogInitialValues}
+      validationSchema={isProduct? productValidationSchema:blogValidationSchema}
       onSubmit={formSubmit}
       enableReinitialize={true}
     >
       {() => (
         <Form autoComplete="nope">
-            <h1 className="text-center tracking-wider font-medium  text-2xl">Edit Product</h1>
+            <h1 className="text-center tracking-wider font-medium  text-2xl">
+                  {isProduct? "Edit Product": "Edit Blog"} 
+                  </h1>
             <div className="flex justify-between px-10   gap-2">
 <div className="flex flex-col w-full">
 
             <FormikInput
                 type="text"
-                label="Product Title"
+                label= {isProduct? "Product Title":"Blog Title"}
                 required={true}
                 name="title"
               />
              
-             <FormikInput
+             <FormikTextarea
                 type="text"
-                label="Product Description"
+                label= {isProduct? "Product Description":"Blog Description"}
+                rows={5}
                 required={true}
                 name="description"
               />
 
-             <FormikInput
-                type="number"
-                label="Product Price"
-                required={true}
-                name="price"
-              />
-             
-             <FormikInput
-                type="number"
-                label="Product quantity"
-                required={true}
-                name="quantity"
-              />
+{
+      isProduct && (
+            <>
+            <FormikInput
+            type="number"
+            label="Product Price"
+            required={true}
+            name="price"
+          />
+         
+         <FormikInput
+            type="number"
+            label="Product quantity"
+            required={true}
+            name="quantity"
+          />
+       </>
+
+      )
+}
+          
+
 </div>
 
 
@@ -88,8 +111,7 @@ const {productId} = useParams()
                 /> */}
                 <div className="flex items-center justify-center h-60 border rounded-full overflow-hidden w-60 mx-auto">
                   <img className="h-60 w-60 object-cover" src={
-                         product.title? 
-                        product.images[0]?.url:'' } alt="Product" />
+                        isProduct && product.title ?product.images[0]?.url:product.blogImage } alt="Product" />
                 </div>
       </div>
       </div>
@@ -100,7 +122,7 @@ const {productId} = useParams()
                 type="submit"
                 className="bg-blue-500 tracking-wide w10/12 mx-auto rounded-lg text-white hover:bg-blue-700 font-semibold px-10 shadow-md py-3"
               >
-                Edit product
+                Edit {isProduct?"Product": "blog"}
               </button>
 </div>
 
@@ -110,4 +132,4 @@ const {productId} = useParams()
   );
 };
 
-export default EditProduct;
+export default EditBlogAndProduct;

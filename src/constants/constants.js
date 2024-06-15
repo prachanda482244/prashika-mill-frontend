@@ -63,7 +63,7 @@ export const navlinks_2 = [
     name: "",
     path: "/cart",
     icons: GiShoppingBag,
-    isVisible: () => true,
+    isVisible: (isLoggedIn) => isLoggedIn ,
   },
   {
     id: 6,
@@ -105,6 +105,11 @@ export const productValidationSchema = yup.object({
   title:yup.string().min(3,"Title should be more than 3 character").required("Title is required"),
   price:yup.number().required("Price is required"),
   quantity:yup.number().required("Quantity is required"),
+  description:yup.string().min(10,"Description should be 10 character long").required("description is required"),
+  image: yup.mixed()
+})
+export const blogValidationSchema = yup.object({
+  title:yup.string().min(3,"Title should be more than 3 character").required("Title is required"),
   description:yup.string().min(10,"Description should be 10 character long").required("description is required"),
   image: yup.mixed()
 })
@@ -188,15 +193,16 @@ export const dashSidebar=[
   },
   {
     id:4,
+    name:"Blogs",
+    icon:FaBloggerB,
+    link:"/dashboard/blogs"
+  },
+  {
+    id:5,
     name:"Inventory",
     icon:MdOutlineInventory2    ,
     link:"/dashboard/inventory"
   },
-  {
-    id:5,
-    name:"Blogs",
-    icon:FaBloggerB,
-    link:"/dashboard/blogs"
-  }
+ 
 
 ]

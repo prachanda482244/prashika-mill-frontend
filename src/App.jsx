@@ -14,7 +14,8 @@ import Dashboard from "./dashboard/Dashboard";
 import DashboardProduct from "./dashboard/components/DashboardProduct";
 import DashboardUser from "./dashboard/components/DashboardUser";
 import CreateProduct from "./dashboard/components/CreateProduct";
-import EditProduct from "./dashboard/components/EditProduct";
+import DashboardBLog from "./dashboard/pages/DashBoardBlog";
+import EditBlogAndProduct from "./dashboard/components/EditBlogAndProduct";
 
 const App = () => {
   const location = useLocation();
@@ -30,7 +31,7 @@ const App = () => {
         <Route path="/sign-in" element={<LoginForm />} />
         <Route path="/unauthorized" element={"Unauthorized"} />
         <Route path="/product/:id" element={<SingleProduct />} />
-
+    <Route path="*" element={"404 not found"} />
         {/* Protected routes */}
         <Route element={<ProtectedRoutes />}>
           <Route path="/cart" element={<Cart />} />
@@ -41,13 +42,16 @@ const App = () => {
             <Route path="/dashboard/*" element={<Dashboard />}>
             <Route path="products" element={<DashboardProduct/>}/>
             <Route path="products/create" element={<CreateProduct/>}/>
-            <Route path="products/edit/:productId" element={<EditProduct/>}/>
-
+            <Route path="products/edit/:id" element={<EditBlogAndProduct isProduct={true}/>}/>
               <Route path="customers" element={<DashboardUser/>} />
               <Route path="orders" element={"Orders"} />
               <Route path="inventory" element={"Inventory"} />
-              <Route path="blogs" element={"blogs"} />
+              <Route path="blogs" element={<DashboardBLog/>} />
+              <Route path="blogs/story/:id" element={"BLogrgwet story"} />
+              <Route path="blog/create" element={<CreateProduct/>} />
+              <Route path="blog/edit/:id" element={<EditBlogAndProduct isProduct={false} />} />
             </Route>
+            
           </Route>
 </Routes>
       {!hideNavbar && <Footer />}

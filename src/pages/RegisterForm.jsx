@@ -8,7 +8,6 @@ import AxiosInstance from "../config/AxiosInstance";
 import FormikFile from "../formik/FormikFile";
 
 const RegisterForm = () => {
-  const [file, setFile] = useState();
   const navigate = useNavigate();
   const initialValues = {
     username: "",
@@ -25,19 +24,21 @@ const RegisterForm = () => {
       formData.append("password", values.password);
       formData.append("avatar", values.avatar);
 
-      console.log(formData);
-
       const { data } = await AxiosInstance.post("/users/register", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Response:", data?.data.statusCode);
-      if (data?.statusCode !== 201) return;
-      toast.success("Registration successful");
-      navigate("/sign-in");
+
+      if (data?.statusCode === 201) {
+        toast.success("Registration successful");
+        resetForm();
+        navigate("/sign-in");
+      } else {
+        toast.error("Registration failed");
+      }
     } catch (error) {
-      toast.error(error.response.data);
+      toast.error(error.response?.data || "An error occurred");
       console.error(error);
     }
   };
@@ -49,19 +50,19 @@ const RegisterForm = () => {
       onSubmit={formSubmit}
       enableReinitialize={true}
     >
-      {() => (
-        <Form autoComplete="nope">
+      {({isSubmitting}) => (
+        <Form autoComplete="off">
           <h1 className="text-center flex items-center justify-between sm:text-lg text-sm md:w-2/3 sm:mx-auto py-1 md:p-4 font-light border-2 w-full shadow-sm">
             Create your mel account! Register{" "}
             <span className="sm:text-base">
               Already a member?{" "}
-              <NavLink to={"/sign-in"} className="text-blue-500">
+              <NavLink to="/sign-in" className="text-blue-500">
                 login here
               </NavLink>
             </span>
           </h1>
 
-          <div className="flex flex-col md:flex-row flex-wrap justify-between  md:w-2/3 mx-auto md:mt-5 md:p-4 rounded-md shadow-xl">
+          <div className="flex flex-col md:flex-row flex-wrap justify-between md:w-2/3 mx-auto md:mt-5 md:p-4 rounded-md shadow-xl">
             <div className="flex flex-col md:w-1/2">
               <FormikInput
                 type="text"
@@ -88,12 +89,14 @@ const RegisterForm = () => {
                 name="avatar"
                 label="Upload your image"
                 required={true}
+                setImagePreview={true} // Enable image preview
               />
               <button
+              disabled={isSubmitting}
                 type="submit"
-                className="bg-blue-400 px-2 mx-4 rounded-lg text-white font-semibold shadow-md py-2"
+                className="disabled:bg-red-400 bg-blue-400 px-2 mx-4 rounded-lg text-white font-semibold shadow-md py-2"
               >
-                Submit
+                {isSubmitting?"Submitting": "Submit"}
               </button>
             </div>
           </div>

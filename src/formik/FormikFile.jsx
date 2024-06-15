@@ -1,10 +1,20 @@
 import { useField } from "formik";
+import React, { useState } from "react";
 
-const FormikFile = ({ name, label, ...props }) => {
+const FormikFile = ({ name, label, setImagePreview = true, ...props }) => {
   const [field, meta, helpers] = useField({ name });
+  const [preview, setPreview] = useState(null);
+
   const handleChange = (event) => {
     const file = event.currentTarget.files[0];
     helpers.setValue(file);
+    if (file && setImagePreview) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -24,6 +34,11 @@ const FormikFile = ({ name, label, ...props }) => {
         onBlur={field.onBlur}
         {...props}
       />
+      {preview && (
+        <div className="flex items-center justify-center">
+          <img src={preview} alt="Preview" className="h-40 w-40 object-cover rounded-full border-2 border-gray-300" />
+        </div>
+      )}
       {meta.touched && meta.error ? (
         <div className="text-red-500 text-sm">{meta.error}</div>
       ) : null}

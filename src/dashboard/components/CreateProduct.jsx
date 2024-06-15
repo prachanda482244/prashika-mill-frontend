@@ -4,36 +4,39 @@ import FormikInput from "../../formik/FormikInput";
 import FormikFile from "../../formik/FormikFile";
 import { productValidationSchema } from "../../constants/constants";
 import AxiosInstance from "../../config/AxiosInstance";
+import FormikTextarea from "../../formik/FormikTextArea";
+import toast from "react-hot-toast";
 
 const CreateProduct = () => {
+  const [imagePreview, setImagePreview] = useState(null);
+
   const initialValues = {
-      title:"",
-      price:0,
-      quantity:0,
-      image:null,
-      description:''
-}
+    title: "",
+    price: 0,
+    quantity: 0,
+    image: null,
+    description: ""
+  };
 
   const formSubmit = async (values, { resetForm }) => {
-      console.log(values)
-      const formData = new FormData();
-      formData.append("title", values.title);
-      formData.append("description", values.description);
-      formData.append("price", parseInt(values.price));
-      formData.append("quantity", parseInt(values.quantity));
-      formData.append("image", values.image);
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("description", values.description);
+    formData.append("price", parseInt(values.price));
+    formData.append("quantity", parseInt(values.quantity));
+    formData.append("image", values.image);
 
-      console.log(formData);
-      const {data} = await AxiosInstance.post("/dashboard/product/create-new-product",formData,{
-            headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-      })
-            if(data.status===200){
-                  resetForm()
-            }
-            console.log(data)
-  console.log(values)
+    const { data } = await AxiosInstance.post("/dashboard/product/create-new-product", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log(data)
+    if (data.statusCode === 201) {
+      resetForm();
+      setImagePreview(null);
+      toast.success(data?.message)
+    }
   };
 
   return (
@@ -43,64 +46,55 @@ const CreateProduct = () => {
       onSubmit={formSubmit}
       enableReinitialize={true}
     >
-      {() => (
-        <Form autoComplete="nope">
-            <h1 className="text-center tracking-wider font-medium  text-2xl">Create new Product</h1>
-            <div className="flex justify-between px-10   gap-2">
-<div className="flex flex-col w-full">
-
-            <FormikInput
+      {({ isSubmitting }) => (
+        <Form autoComplete="off">
+          <h1 className="text-center tracking-wider font-medium text-2xl mb-6">Create new Product</h1>
+          <div className="flex justify-between px-10 gap-2">
+            <div className="flex flex-col w-full">
+              <FormikInput
                 type="text"
                 label="Product Title"
                 required={true}
                 name="title"
               />
-             
-             <FormikInput
-                type="text"
+              <FormikTextarea
                 label="Product Description"
                 required={true}
                 name="description"
+                rows={3} 
               />
-
-             <FormikInput
+              <FormikInput
                 type="number"
                 label="Product Price"
                 required={true}
                 name="price"
               />
-             
-             <FormikInput
+              <FormikInput
                 type="number"
-                label="Product quantity"
+                label="Product Quantity"
                 required={true}
                 name="quantity"
               />
-</div>
+            </div>
 
-
-      <div>
+            <div className="flex flex-col items-center">
               <FormikFile
                 name="image"
-                label="Upload Product"
-                required={true}
-                />
-                <div className="flex items-center justify-center h-60 border rounded-full w-60 mx-auto">
-                  Image preview
-                </div>
-      </div>
-      </div>
+                label="Upload Product Image"
+                setImagePreview={setImagePreview}
+              />
+              
+            </div>
+          </div>
 
-<div className=" flex items-center">
-
-              <button
-                type="submit"
-                className="bg-blue-500 tracking-wide w10/12 mx-auto rounded-lg text-white hover:bg-blue-700 font-semibold px-10 shadow-md py-3"
-              >
-                Create product
-              </button>
-</div>
-
+          <div className="flex items-center mt-6">
+            <button
+              type="submit"
+              className="bg-blue-500 tracking-wide w-10/12 mx-auto rounded-lg text-white hover:bg-blue-700 font-semibold px-10 shadow-md py-3"
+            >
+               {isSubmitting?"Creating product": "Create product"}
+            </button>
+          </div>
         </Form>
       )}
     </Formik>
