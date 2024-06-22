@@ -16,6 +16,7 @@ import DashboardUser from "./dashboard/components/DashboardUser";
 import CreateProduct from "./dashboard/components/CreateProduct";
 import DashboardBLog from "./dashboard/pages/DashBoardBlog";
 import EditBlogAndProduct from "./dashboard/components/EditBlogAndProduct";
+import Order from "./pages/Order";
 
 const App = () => {
   const location = useLocation();
@@ -30,32 +31,41 @@ const App = () => {
         <Route path="/sign-up" element={<RegisterForm />} />
         <Route path="/sign-in" element={<LoginForm />} />
         <Route path="/unauthorized" element={"Unauthorized"} />
+        <Route
+          path="/forgot-password/:token"
+          element={"Forgot Password page"}
+        />
         <Route path="/product/:id" element={<SingleProduct />} />
-    <Route path="*" element={"404 not found"} />
+        <Route path="*" element={"404 not found"} />
         {/* Protected routes */}
         <Route element={<ProtectedRoutes />}>
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/order" element={<Order />} />
         </Route>
 
         <Route element={<ProtectedRoutes requiredRole="admin" />}>
-            <Route path="/dashboard/*" element={<Dashboard />}>
-            <Route path="products" element={<DashboardProduct/>}/>
-            <Route path="products/create" element={<CreateProduct/>}/>
-            <Route path="products/edit/:id" element={<EditBlogAndProduct isProduct={true}/>}/>
-              <Route path="customers" element={<DashboardUser/>} />
-              <Route path="orders" element={"Orders"} />
-              <Route path="inventory" element={"Inventory"} />
-              <Route path="blogs" element={<DashboardBLog/>} />
-              <Route path="blogs/story/:id" element={"BLogrgwet story"} />
-              <Route path="blog/create" element={<CreateProduct/>} />
-              <Route path="blog/edit/:id" element={<EditBlogAndProduct isProduct={false} />} />
-            </Route>
-            
+          <Route path="/dashboard/*" element={<Dashboard />}>
+            <Route path="products" element={<DashboardProduct />} />
+            <Route path="products/create" element={<CreateProduct />} />
+            <Route
+              path="products/edit/:id"
+              element={<EditBlogAndProduct isProduct={true} />}
+            />
+            <Route path="customers" element={<DashboardUser />} />
+            <Route path="orders" element={"Orders"} />
+            <Route path="inventory" element={"Inventory"} />
+            <Route path="blogs" element={<DashboardBLog />} />
+            <Route path="blogs/story/:id" element={"BLogrgwet story"} />
+            <Route path="blog/create" element={<CreateProduct />} />
+            <Route
+              path="blog/edit/:id"
+              element={<EditBlogAndProduct isProduct={false} />}
+            />
           </Route>
-</Routes>
+        </Route>
+      </Routes>
       {!hideNavbar && <Footer />}
-
     </div>
   );
 };

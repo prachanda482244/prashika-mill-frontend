@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { fetchCartData, removeFromCart, updateCart } from "../store/slices/cartSlice";
+import {
+  fetchCartData,
+  removeFromCart,
+  updateCart,
+} from "../store/slices/cartSlice";
+import { addProducts } from "../store/slices/orderSlice";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { cartItems,message } = useSelector((state) => state.cart);
+  const { cartItems, message } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   // Create a local state to manage quantities
   const [localQuantities, setLocalQuantities] = useState({});
 
@@ -17,9 +23,8 @@ const Cart = () => {
     }, {});
     setLocalQuantities(quantities);
 
-    dispatch(fetchCartData())
+    dispatch(fetchCartData());
   }, []);
-
 
   const handleClearCart = () => {
     const result = confirm("Are you sure you want to clear the cart..?");
@@ -37,9 +42,9 @@ const Cart = () => {
       ...prevQuantities,
       [productId]: prevQuantities[productId] + 1,
     }));
-    let quantity = localQuantities[productId]+1
-    dispatch(updateCart( {productId,quantity}));
-    toast.success(message)
+    let quantity = localQuantities[productId] + 1;
+    dispatch(updateCart({ productId, quantity }));
+    toast.success(message);
   };
 
   const handleDecrement = (productId) => {
@@ -49,14 +54,25 @@ const Cart = () => {
         [productId]: prevQuantities[productId] - 1,
       }));
 
-      dispatch(updateCart({ productId, quantity: localQuantities[productId] - 1 }));
-    toast.success(message)      
+      dispatch(
+        updateCart({ productId, quantity: localQuantities[productId] - 1 })
+      );
+      toast.success(message);
     }
   };
 
   const totalPrice = cartItems.products?.reduce((total, product) => {
     return total + product.product.price * localQuantities[product.product._id];
   }, 0);
+  const handleCheckOut = () => {
+    const userId = cartItems.user;
+    const products = cartItems.products;
+    console.log(userId);
+    dispatch(addProducts({ userId, products }));
+
+    navigate("/order");
+  };
+  console.log(cartItems);
 
   return (
     <div className="flex gap-5 pt-10 w-[70%] mx-auto p-3 flex-col">
@@ -112,7 +128,8 @@ const Cart = () => {
           <div className="flex flex-col justify-between  ">
             <p className="text-gray-400">Total Price</p>
             <p className="text-sm">
-              Rs:{localQuantities[products.product._id] * products.product.price}
+              Rs:
+              {localQuantities[products.product._id] * products.product.price}
             </p>
             <button
               className="text-purple-700 mt-10 border-[1px] rounded-sm py-1 px-4 text-sm"
@@ -132,6 +149,14 @@ const Cart = () => {
         <div className="flex justify-between border-b-[2px]">
           <p>Total order</p>
           <p>{cartItems.products?.length}</p>
+        </div>
+        <div>
+          <button
+            onClick={handleCheckOut}
+            className="bg-slate-700 text-white py-2 px-6"
+          >
+            CheckOut
+          </button>
         </div>
       </div>
     </div>
