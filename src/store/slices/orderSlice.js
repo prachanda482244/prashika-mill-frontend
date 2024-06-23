@@ -19,12 +19,13 @@ const initialState = {
 };
 
 // Fetch user orders
-// export const fetchOrders = createAsyncThunk("order/fetchOrders", async () => {
-//   const { data } = await AxiosInstance.get("/orders", {
-//     withCredentials: true,
-//   });
-//   return data.data;
-// });
+export const fetchOrders = createAsyncThunk("order/fetchOrders", async () => {
+  const { data } = await AxiosInstance.get("/order", {
+    withCredentials: true,
+  });
+  console.log(data);
+  return data;
+});
 
 // Create a new order
 export const createOrder = createAsyncThunk(
@@ -101,18 +102,18 @@ const orderSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch orders
-      // .addCase(fetchOrders.pending, (state) => {
-      //   state.status = "loading";
-      // })
-      // .addCase(fetchOrders.fulfilled, (state, action) => {
-      //   state.status = "idle";
-      //   state.orders = action.payload;
-      //   state.message = "Orders fetched successfully";
-      // })
-      // .addCase(fetchOrders.rejected, (state, action) => {
-      //   state.status = "failed";
-      //   state.error = action.error.message;
-      // })
+      .addCase(fetchOrders.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.orders = action.payload;
+        state.message = "Orders fetched successfully";
+      })
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
 
       // Create order
       .addCase(createOrder.pending, (state) => {

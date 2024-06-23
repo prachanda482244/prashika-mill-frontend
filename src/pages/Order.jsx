@@ -1,10 +1,14 @@
 import { Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import FormikInput from "../formik/FormikInput";
 import { orderValidationSchema } from "../constants/constants";
 import FormikTextarea from "../formik/FormikTextArea";
 import { useDispatch, useSelector } from "react-redux";
-import { addShippingDetails, createOrder } from "../store/slices/orderSlice";
+import {
+  addShippingDetails,
+  createOrder,
+  fetchOrders,
+} from "../store/slices/orderSlice";
 
 const Order = () => {
   const { userData } = useSelector((state) => state.user);
@@ -37,6 +41,10 @@ const Order = () => {
       })
     );
   };
+
+  useEffect(() => {
+    dispatch(fetchOrders());
+  }, []);
   return (
     <Formik
       initialValues={initialValues}
