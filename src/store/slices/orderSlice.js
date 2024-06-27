@@ -20,7 +20,7 @@ const initialState = {
 
 // Fetch user orders
 export const fetchOrders = createAsyncThunk("order/fetchOrders", async () => {
-  const { data } = await AxiosInstance.get("/order", {
+  const { data } = await AxiosInstance.get("/dashboard/order/get-all-order", {
     withCredentials: true,
   });
   console.log(data);
