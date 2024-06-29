@@ -17,6 +17,8 @@ import CreateProduct from "./dashboard/components/CreateProduct";
 import DashboardBLog from "./dashboard/pages/DashBoardBlog";
 import EditBlogAndProduct from "./dashboard/components/EditBlogAndProduct";
 import Order from "./pages/Order";
+import Products from "./pages/Products";
+import MostPopular from "./pages/MostPopular";
 
 const App = () => {
   const location = useLocation();
@@ -30,6 +32,14 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/sign-up" element={<RegisterForm />} />
         <Route path="/sign-in" element={<LoginForm />} />
+        <Route
+          path="/products"
+          element={<MostPopular title="All Products" />}
+        />
+        <Route path="blog" element={"Blog"} />
+        <Route path="about" element={"Our story"} />
+        <Route path="contact" element={"COntact form"} />
+
         <Route path="/unauthorized" element={"Unauthorized"} />
         <Route
           path="/forgot-password/:token"
