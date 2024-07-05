@@ -19,6 +19,7 @@ import EditBlogAndProduct from "./dashboard/components/EditBlogAndProduct";
 import Order from "./pages/Order";
 import Products from "./pages/Products";
 import MostPopular from "./pages/MostPopular";
+import DashboardOrder from "./dashboard/components/DashboardOrder";
 
 const App = () => {
   const location = useLocation();
@@ -63,7 +64,7 @@ const App = () => {
               element={<EditBlogAndProduct isProduct={true} />}
             />
             <Route path="customers" element={<DashboardUser />} />
-            <Route path="orders" element={"Orders"} />
+            <Route path="orders" element={<DashboardOrder />} />
             <Route path="inventory" element={"Inventory"} />
             <Route path="blogs" element={<DashboardBLog />} />
             <Route path="blogs/story/:id" element={"BLogrgwet story"} />
