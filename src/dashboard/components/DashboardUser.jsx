@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 const DashboardUser = () => {
   const [users, setUsers] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   const getAllUsers = async () => {
     const { data } = await AxiosInstance.get("/dashboard/get-all-users");
@@ -13,7 +14,7 @@ const DashboardUser = () => {
 
   useEffect(() => {
     getAllUsers();
-  }, [users]);
+  }, [refresh]);
 
   const handleRemove = async (id, user) => {
     const deleteUser = confirm("Are you sure you want to delete this user. ?");
@@ -25,7 +26,9 @@ const DashboardUser = () => {
       const { data } = await AxiosInstance.delete(
         `/dashboard/delete-user/${id}`
       );
+      if (data?.statusCode !== 200) return;
       toast.success(data?.message);
+      setRefresh(!refresh);
     }
     console.log(id);
   };
