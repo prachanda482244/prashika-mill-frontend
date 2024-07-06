@@ -239,3 +239,26 @@ export const dashSidebar = [
     link: "/dashboard/inventory",
   },
 ];
+
+export const options = [
+  {
+    id: 0,
+    label: "Pending",
+    value: "pending",
+  },
+  {
+    id: 1,
+    label: "Processing",
+    value: "processing",
+  },
+  {
+    id: 2,
+    label: "Delivered",
+    value: "delivered",
+  },
+  {
+    id: 3,
+    label: "Cancelled",
+    value: "cancelled",
+  },
+];

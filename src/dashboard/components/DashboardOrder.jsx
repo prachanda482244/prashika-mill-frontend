@@ -4,32 +4,22 @@ import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { CiCircleChevDown } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import toast from "react-hot-toast";
+import { options } from "../../constants/constants";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const DashboardOrder = () => {
-  const options = [
-    {
-      id: 1,
-      label: "Pending",
-      value: "pending",
-    },
-    {
-      id: 2,
-      label: "Delivered",
-      value: "delivered",
-    },
-    {
-      id: 3,
-      label: "Cancelled",
-      value: "cancelled",
-    },
-  ];
+  const { search } = useSelector((state) => state.search);
   const [orders, setOrders] = useState([]);
+  const [filteredOrder, setFilteredOrder] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const navigate = useNavigate();
 
   const getAllOrder = async () => {
     const { data } = await AxiosInstance.get("/dashboard/order/get-all-order");
     if (data.statusCode !== 200) return;
     setOrders(data?.data);
+    setFilteredOrder(data?.data);
   };
 
   const handleDeleteOrder = async (id) => {
@@ -49,15 +39,30 @@ const DashboardOrder = () => {
   };
 
   const handleChange = async (id, e) => {
-    console.log(id);
-    const { data } = await AxiosInstance.patch(`/order/${id}/update-status`);
+    const { data } = await AxiosInstance.patch(`/order/${id}/update-status`, {
+      status: e.target.value,
+    });
+
     if (data?.statusCode !== 200) return;
+    setRefresh(!refresh);
     toast.success(data?.message);
   };
+  const filteredOrdersArr = orders.filter(
+    (order) =>
+      order.name.toLowerCase().includes(search) ||
+      order.address.join(" ").toLowerCase().includes(search)
+  );
   useEffect(() => {
     getAllOrder();
   }, [refresh]);
 
+  useEffect(() => {
+    if (search.trim() === "") {
+      setFilteredOrder(orders);
+    } else {
+      setFilteredOrder(filteredOrdersArr);
+    }
+  }, [search]);
   return (
     <div style={{ fontFamily: "sans-serif" }} className="flex px-6 flex-col ">
       <div>
@@ -82,54 +87,72 @@ const DashboardOrder = () => {
               <FaCaretUp />
             </span>
           </p>
-          <p className="w-20">Status</p>
+          <p className="w-28">Payment</p>
+          <p className="w-20 ">Status</p>
           <p className=" w-32">Action</p>
         </div>
         <div className="flex mt-2 flex-col gap-2">
-          {orders &&
-            orders?.map((order) => (
+          {filteredOrder && filteredOrder.length !== 0 ? (
+            filteredOrder?.map((order) => (
               <div
                 key={order._id}
-                className="flex gap-4 px-4 py-2 rounded-lg font-semibold tracking-wide leading-8 items-center justify-between border text-sm hover:bg-blue-500 hover:text-white cursor-pointer capitalize transition-all delay-75 ease-linear font-sans"
+                className="flex gap-4 px-4 py-2 rounded-lg font-semibold tracking-wide leading-8 items-center justify-between border text-sm hover:bg-blue-400 hover:text-white cursor-pointer capitalize transition-all delay-75 ease-linear font-sans"
               >
-                <p className=" w-20">#{order._id.slice(17)}</p>
-                <p className=" w-40">{order.shippingDetails.name}</p>
+                <p
+                  className="hover:text-green-200 w-20"
+                  onClick={() => navigate(`/dashboard/orders/${order._id}`)}
+                >
+                  #{order._id.slice(17)}
+                </p>
+                <p className=" w-40">{order.name}</p>
                 <p className="capitalize w-60">
-                  {order.shippingDetails.address.city},{" "}
+                  {order.address[0]},{" "}
                   <span className="font-light tracking-widest">
-                    {order.shippingDetails.address.street.toUpperCase()}
+                    {order.address[1].toUpperCase()}
                   </span>
                 </p>
                 <p className="w-32">
-                  {new Date(
-                    order.createdAt.substring(0, 10)
-                  ).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  {new Date(order.date.substring(0, 10)).toLocaleDateString(
+                    "en-US",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }
+                  )}
                 </p>
-                <p className="w-32 ">Rs:{order.totalAmount}</p>
+                <p className="w-32 ">Rs:{order.totalPrice}</p>
+                <p className="w-20 ">
+                  <span
+                    className={` px-2 py-1 bg-gray-100 rounded-lg
+                    ${
+                      order.paymentStatus === "unpaid"
+                        ? "text-purple-500 bg-purple-100"
+                        : "text-green-500 bg-green-100"
+                    }
+                    `}
+                  >
+                    {order.paymentStatus}
+                  </span>
+                </p>
                 <p
                   className={`w-20 ${
-                    order.paymentStatus.toLowerCase() === "paid"
+                    order.status === "delivered"
                       ? "text-green-400"
                       : "text-red-400"
                   } flex items-center gap-2`}
                 >
-                  <CiCircleChevDown className="text-xl " />
-                  {order.paymentStatus}
+                  <CiCircleChevDown size={40} className="text-2xl" />
+                  {order.status}
                 </p>
                 <p className="w-40  justify-between flex items-center gap-2 text-black">
                   <select
                     onChange={(e) => handleChange(order._id, e)}
-                    className="outline-none border-black border rounded-lg p-3 cursor-pointer"
+                    className="outline-none border-black border rounded-lg p-2 cursor-pointer"
                     name="orderStatus"
                     id="orderStatus"
                     defaultValue={
-                      order.paymentStatus.toLowerCase() === "paid"
-                        ? "delivered"
-                        : "pending"
+                      order.status === "pending" ? "pending" : "delivered"
                     }
                   >
                     {options?.map((option) => (
@@ -147,7 +170,12 @@ const DashboardOrder = () => {
                   </button>
                 </p>
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="flex items-center font-semibold justify-center text-xl py-2 text-red-500">
+              No order found
+            </div>
+          )}
         </div>
       </div>
     </div>

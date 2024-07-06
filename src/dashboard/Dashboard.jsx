@@ -9,7 +9,6 @@ const Dashboard = () => {
 
   const getDashboardDetails = async () => {
     const { data } = await AxiosInstance.get("/dashboard");
-    console.log(data);
     if (data.statusCode !== 200) return;
     setDashboardDetails(data.data);
   };
@@ -17,9 +16,6 @@ const Dashboard = () => {
   useEffect(() => {
     getDashboardDetails();
   }, []);
-
-  console.log(dashboardDetails);
-
   return (
     <div>
       <DashNavBar />

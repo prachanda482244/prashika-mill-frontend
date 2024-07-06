@@ -20,6 +20,7 @@ import Order from "./pages/Order";
 import Products from "./pages/Products";
 import MostPopular from "./pages/MostPopular";
 import DashboardOrder from "./dashboard/components/DashboardOrder";
+import DashboardOrderDetails from "./dashboard/pages/DashboardOrderDetails";
 
 const App = () => {
   const location = useLocation();
@@ -65,6 +66,7 @@ const App = () => {
             />
             <Route path="customers" element={<DashboardUser />} />
             <Route path="orders" element={<DashboardOrder />} />
+            <Route path="orders/:id" element={<DashboardOrderDetails />} />
             <Route path="inventory" element={"Inventory"} />
             <Route path="blogs" element={<DashboardBLog />} />
             <Route path="blogs/story/:id" element={"BLogrgwet story"} />
