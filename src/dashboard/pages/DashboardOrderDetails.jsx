@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AxiosInstance from "../../config/AxiosInstance";
 import toast from "react-hot-toast";
+import { statusStyles } from "../../constants/constants";
 
 const DashboardOrderDetails = () => {
   const { id } = useParams();
-  const [userOrder, setUserOrder] = useState(null); // Initialize as null
+  const [userOrder, setUserOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchSingleDetails = async () => {
@@ -30,12 +31,19 @@ const DashboardOrderDetails = () => {
   }, [id]);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Show loading message
+    return <div>Loading...</div>;
   }
 
   if (!userOrder) {
-    return <div>No order details available</div>; // Show message if no data
+    return <div>No order details available</div>;
   }
+  console.log(userOrder);
+
+  const currentStatus = statusStyles[userOrder.status] || {
+    text: "Unknown",
+    bgColor: "bg-gray-200",
+    textColor: "text-gray-700",
+  };
 
   return (
     <div>
@@ -93,13 +101,9 @@ const DashboardOrderDetails = () => {
                 <div className="flex flex-col gap-1">
                   <p>Status:</p>
                   <span
-                    className={`border capitalize ${
-                      userOrder.status === "pending"
-                        ? "border-red-500 text-red-400"
-                        : "border-green-500 text-green-400"
-                    } px-4 py-2 rounded-md`}
+                    className={`border capitalize ${currentStatus.bgColor} ${currentStatus.textColor} px-4 py-2 rounded-md`}
                   >
-                    {userOrder.status}
+                    {currentStatus.text}
                   </span>
                 </div>
 
@@ -167,6 +171,10 @@ const DashboardOrderDetails = () => {
                           </div>
                           <div className="flex items-center">
                             Quantity: <p>{item.productQuantity}</p>
+                          </div>
+                          <div className="flex items-center">
+                            Total:{" "}
+                            <p>{item.productPrice * item.productQuantity}</p>
                           </div>
                         </div>
                       </div>

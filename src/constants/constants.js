@@ -40,13 +40,6 @@ export const navlinks_1 = [
   },
 ];
 export const navlinks_2 = [
-  // {
-  //   id: 1,
-  //   name: "register",
-  //   path: "/sign-up",
-  //   icons: FaHouseUser,
-  //   isVisible: (isLoggedIn) => !isLoggedIn,
-  // },
   {
     id: 2,
     name: "Log in",
@@ -262,3 +255,36 @@ export const options = [
     value: "cancelled",
   },
 ];
+
+export const statusStyles = {
+  pending: {
+    text: "Pending",
+    bgColor: "bg-yellow-200",
+    textColor: "text-yellow-700",
+  },
+  processing: {
+    text: "Processing",
+    bgColor: "bg-blue-200",
+    textColor: "text-blue-700",
+  },
+  delivered: {
+    text: "Delivered",
+    bgColor: "bg-green-200",
+    textColor: "text-green-700",
+  },
+  cancelled: {
+    text: "Cancelled",
+    bgColor: "bg-red-200",
+    textColor: "text-red-700",
+  },
+  unpaid: {
+    text: "Unpaid",
+    bgColor: "bg-purple-100",
+    textColor: "text-purple-500",
+  },
+  paid: {
+    text: "Paid",
+    bgColor: "bg-green-100",
+    textColor: "text-green-500",
+  },
+};

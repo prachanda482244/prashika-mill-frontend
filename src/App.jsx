@@ -38,26 +38,29 @@ const App = () => {
           path="/products"
           element={<MostPopular title="All Products" />}
         />
-        <Route path="blog" element={"Blog"} />
-        <Route path="about" element={"Our story"} />
-        <Route path="contact" element={"COntact form"} />
+        <Route path="/product/:id" element={<SingleProduct />} />
+        <Route path="*" element={<div>404 Not Found</div>} />
 
-        <Route path="/unauthorized" element={"Unauthorized"} />
+        {/* Unprotected routes */}
+        <Route path="/unauthorized" element={<div>Unauthorized</div>} />
+        <Route path="/blog" element={<div>Blog</div>} />
+        <Route path="/about" element={<div>Our Story</div>} />
+        <Route path="/contact" element={<div>Contact Form</div>} />
         <Route
           path="/forgot-password/:token"
-          element={"Forgot Password page"}
+          element={<div>Forgot Password</div>}
         />
-        <Route path="/product/:id" element={<SingleProduct />} />
-        <Route path="*" element={"404 not found"} />
-        {/* Protected routes */}
+
+        {/* Protected routes for logged-in users */}
         <Route element={<ProtectedRoutes />}>
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/order" element={<Order />} />
         </Route>
 
+        {/* Protected routes for admin users */}
         <Route element={<ProtectedRoutes requiredRole="admin" />}>
-          <Route path="/dashboard/*" element={<Dashboard />}>
+          <Route path="/dashboard" element={<Dashboard />}>
             <Route path="products" element={<DashboardProduct />} />
             <Route path="products/create" element={<CreateProduct />} />
             <Route
@@ -67,9 +70,9 @@ const App = () => {
             <Route path="customers" element={<DashboardUser />} />
             <Route path="orders" element={<DashboardOrder />} />
             <Route path="orders/:id" element={<DashboardOrderDetails />} />
-            <Route path="inventory" element={"Inventory"} />
+            <Route path="inventory" element={<div>Inventory</div>} />
             <Route path="blogs" element={<DashboardBLog />} />
-            <Route path="blogs/story/:id" element={"BLogrgwet story"} />
+            <Route path="blogs/story/:id" element={<div>Blog Story</div>} />
             <Route path="blog/create" element={<CreateProduct />} />
             <Route
               path="blog/edit/:id"

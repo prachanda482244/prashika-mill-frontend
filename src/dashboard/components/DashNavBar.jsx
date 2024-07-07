@@ -11,7 +11,6 @@ const DashNavBar = () => {
     setSearchInput(value);
     dispatch(setsearch(value));
   };
-  const handleAddSearch = () => {};
   return (
     <nav className="flex items-center justify-between py-3 px-10">
       <div>
@@ -26,7 +25,6 @@ const DashNavBar = () => {
           onChange={(e) => handleSearch(e.target.value)}
         />
         <CiSearch className="absolute left-4 top-3 text-2xl" />
-        <button onClick={handleAddSearch}>Search</button>
       </div>
       <div className="flex items-center gap-2">
         <img
