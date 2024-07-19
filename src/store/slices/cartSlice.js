@@ -13,13 +13,14 @@ export const fetchCartData = createAsyncThunk("cart/item", async () => {
 });
 
 export const addToCart = createAsyncThunk(
-  "cart/add-to-cart", async (productId, product) => {
- const{data}=   await AxiosInstance.post(
+  "cart/add-to-cart",
+  async (productId, product) => {
+    const { data } = await AxiosInstance.post(
       `/cart/add-to-cart/${productId}`,
       { product, quantity: 1 },
       { withCredentials: true }
     );
-    return data
+    return data;
   }
 );
 
@@ -36,7 +37,7 @@ export const removeFromCart = createAsyncThunk(
 );
 export const updateCart = createAsyncThunk(
   "cart/update",
-  async ({productId, quantity}) => {
+  async ({ productId, quantity }) => {
     const { data } = await AxiosInstance.put(
       `/cart/update-cart/${productId}`,
       { quantity: parseInt(quantity) },
@@ -66,34 +67,34 @@ const cartSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
-      .addCase(addToCart.pending,(state)=>{
-        state.status="loading"
+      .addCase(addToCart.pending, (state) => {
+        state.status = "loading";
       })
       .addCase(addToCart.fulfilled, (state, action) => {
-        state.status="idle"
-        state.cartItems = action.payload;
-        state.message = action.payload.message
-      })
-      .addCase(updateCart.pending,(state)=>{
-        state.status="loading"
-      })
-      .addCase(updateCart.fulfilled, (state, action) => {
-        state.status="idle"
+        state.status = "idle";
         state.cartItems = action.payload;
         state.message = action.payload.message;
       })
-      .addCase(removeFromCart.pending,(state)=>{
-        state.status="loading"
+      .addCase(updateCart.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateCart.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.cartItems = action.payload;
+        state.message = action.payload.message;
+      })
+      .addCase(removeFromCart.pending, (state) => {
+        state.status = "loading";
       })
       .addCase(removeFromCart.fulfilled, (state, action) => {
-        state.status="idle"
+        state.status = "idle";
         state.cartItems = action.payload;
       })
-      .addCase(clearCart.pending,(state)=>{
-        state.status="loading"
+      .addCase(clearCart.pending, (state) => {
+        state.status = "loading";
       })
       .addCase(clearCart.fulfilled, (state) => {
-        state.status="idle"
+        state.status = "idle";
         state.cartItems = [];
       });
   },

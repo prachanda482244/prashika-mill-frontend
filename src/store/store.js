@@ -6,14 +6,12 @@ import storage from "redux-persist/lib/storage"; // Defaults to localStorage for
 import authSlice from "./slices/authSlice";
 import cartSlice from "./slices/cartSlice";
 import modelSlice from "./slices/modalSlice";
-import orderSlice from "./slices/orderSlice";
 import searchSlice from "./slices/searchSlice";
 
 const rootReducer = combineReducers({
   user: authSlice,
   cart: cartSlice,
   modal: modelSlice,
-  order: orderSlice,
   search: searchSlice,
 });
 

@@ -14,46 +14,44 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
       <Field name={name}>
         {({ field, form, meta }) => {
           return (
-            <div>
-              <div className="flex relative flex-col p-4 ">
-                <label
-                  className="capitalize tracking-wide font-medium flex gap-2 text-gray-500"
-                  htmlFor={name}
+            <div className="flex  relative flex-col p-4 ">
+              <label
+                className="capitalize tracking-wide font-medium flex gap-2 text-gray-500"
+                htmlFor={name}
+              >
+                {label}
+                <span className="text-red-900 text-xl">
+                  {required ? "*" : ""}
+                </span>
+              </label>
+              <input
+                className="border-[1px] focus:outline-gray-400  rounded-sm px-4 py-1"
+                type={
+                  type === "password" && !isPasswordVisible
+                    ? "password"
+                    : "text"
+                }
+                {...field}
+                {...props}
+                id={name}
+                value={meta.value}
+                onChange={field.onChange}
+                autoComplete="off"
+              />
+              {type === "password" && (
+                <span
+                  onClick={togglePasswordVisibility}
+                  className="absolute top-[50px] cursor-pointer right-10"
                 >
-                  {label}
-                  <span className="text-red-900 text-xl">
-                    {required ? "*" : ""}
-                  </span>
-                </label>
-                <input
-                  className="border-[1px] rounded-sm px-4 py-1"
-                  type={
-                    type === "password" && !isPasswordVisible
-                      ? "password"
-                      : "text"
-                  }
-                  {...field}
-                  {...props}
-                  id={name}
-                  value={meta.value}
-                  onChange={field.onChange}
-                  autoComplete="off"
-                />
-                {type === "password" && (
-                  <span
-                    onClick={togglePasswordVisibility}
-                    className="absolute top-[50px] cursor-pointer right-10"
-                  >
-                    {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
-                  </span>
+                  {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
+                </span>
+              )}
+              <div className="h-2">
+                {meta.touched && meta.error && (
+                  <div className="text-red-500  text-sm italic">
+                    {meta.error}
+                  </div>
                 )}
-                <div className="h-2">
-                  {meta.touched && meta.error && (
-                    <div className="text-red-500  text-sm italic">
-                      {meta.error}
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           );
