@@ -44,7 +44,7 @@ const LoginForm = () => {
     >
       {({ isSubmitting }) => {
         return (
-          <Form autoComplete="nope">
+          <Form>
             <h1 className="text-center flex items-center justify-between sm:text-lg text-sm md:w-2/3 sm:mx-auto py-1 md:p-4 font-light border-2 w-full shadow-sm">
               Welcome to Prashika-Mel ! Login{" "}
               <span className="sm:text-base">

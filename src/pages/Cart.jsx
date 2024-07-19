@@ -70,8 +70,9 @@ const Cart = () => {
   const handleCheckOut = () => {
     if (cartItems.products.length == 0) {
       toast.error("No item in cart to order");
+    } else {
+      navigate("/order");
     }
-    navigate("/order");
   };
 
   useEffect(() => {
@@ -178,7 +179,15 @@ const Cart = () => {
               </div>
             ))
           ) : (
-            <div className=" mt-2 text-lg">No items in the cart</div>
+            <div className=" mt-2 text-lg">
+              No items in the cart{" "}
+              <button
+                onClick={() => navigate("/products")}
+                className="text-blue-400"
+              >
+                Shop now
+              </button>
+            </div>
           )}
         </div>
 
