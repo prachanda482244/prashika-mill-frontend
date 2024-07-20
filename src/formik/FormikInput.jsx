@@ -41,7 +41,7 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
               {type === "password" && (
                 <span
                   onClick={togglePasswordVisibility}
-                  className="absolute top-[50px] cursor-pointer right-10"
+                  className="absolute top-[60px] cursor-pointer right-10"
                 >
                   {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
                 </span>

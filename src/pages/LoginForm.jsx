@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import React from "react";
 import FormikInput from "../formik/FormikInput";
 import { loginValidationSchema } from "../constants/constants";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AxiosInstance from "../config/AxiosInstance";
 import { useDispatch } from "react-redux";
@@ -44,39 +44,55 @@ const LoginForm = () => {
     >
       {({ isSubmitting }) => {
         return (
-          <Form>
-            <h1 className="text-center flex items-center justify-between sm:text-lg text-sm md:w-2/3 sm:mx-auto py-1 md:p-4 font-light border-2 w-full shadow-sm">
-              Welcome to Prashika-Mel ! Login{" "}
-              <span className="sm:text-base">
-                New member ?{" "}
-                <NavLink to={"/sign-up"} className="text-blue-500">
-                  register{" "}
-                </NavLink>
-                here
-              </span>
-            </h1>
-            <div className="flex flex-col flex-wrap justify-between  md:w-2/3 mx-auto md:mt-5 md:p-4 rounded-md shadow-xl">
-              <FormikInput
-                type="email"
-                label="email"
-                required={true}
-                name="email"
-              />
-              <FormikInput
-                type="password"
-                label="password"
-                required={true}
-                name="password"
-              />
-
-              <button
-                type="submit"
-                className="bg-blue-400 px-2 rounded-lg text-white font-semibold shadow-md py-2 mx-2"
+          <div className="py-2 border  border-black mx-auto sm:w-1/2">
+            <Form className="  p-2">
+              <div className="flex flex-col gap-2">
+                <div>
+                  <h1 className="font-semibold text-3xl pl-2 capitalize border-b pb-2">
+                    Sign In
+                  </h1>
+                </div>
+                <div>
+                  <FormikInput
+                    type="email"
+                    label="email"
+                    required={true}
+                    name="email"
+                  />
+                </div>
+                <div>
+                  <FormikInput
+                    type="password"
+                    label="password"
+                    required={true}
+                    name="password"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-4 justify-between px-4">
+                <button
+                  type="submit"
+                  className="border-black hover:bg-slate-700  border duration-200 w-full py-1 bg-black text-white rounded-sm"
+                >
+                  {isSubmitting ? "loading" : "login"}
+                </button>
+                <Link
+                  to="/sign-up"
+                  className="border-black hover:bg-slate-300 border duration-200 w-full text-center py-1 bg-white text-black rounded-sm"
+                >
+                  Signup
+                </Link>
+              </div>
+            </Form>
+            <div className="flex justify-center mt-2">
+              <Link
+                to="/forgot-password"
+                className="hover:text-blue-500 hover:underline"
               >
-                {isSubmitting ? "loading" : "login"}
-              </button>
+                Forgot password ?
+              </Link>
             </div>
-          </Form>
+          </div>
         );
       }}
     </Formik>
