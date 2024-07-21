@@ -18,7 +18,7 @@ const FormikFile = ({ name, label, setImagePreview = true, ...props }) => {
   };
 
   return (
-    <div className="flex gap-2 flex-col p-4">
+    <div className="flex gap-2 flex-col p-[10px]">
       <label
         className="capitalize underline underline-offset-2 font-light flex gap-2 text-gray-500"
         htmlFor={props.id || props.name}
@@ -36,7 +36,11 @@ const FormikFile = ({ name, label, setImagePreview = true, ...props }) => {
       />
       {preview && (
         <div className="flex items-center justify-center">
-          <img src={preview} alt="Preview" className="h-40 w-40 object-cover rounded-full border-2 border-gray-300" />
+          <img
+            src={preview}
+            alt="Preview"
+            className="h-40 w-40 object-cover rounded-full border-2 border-gray-300"
+          />
         </div>
       )}
       {meta.touched && meta.error ? (

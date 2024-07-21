@@ -17,6 +17,8 @@ import {
 } from "react-icons/md";
 
 import * as yup from "yup";
+const message = "This field is required";
+
 export const navlinks_1 = [
   {
     id: 1,
@@ -141,6 +143,16 @@ export const orderValidationSchema = yup.object().shape({
   cashondelivery: yup
     .string()
     .oneOf(["cashondelivery"], "Invalid payment option"),
+});
+
+export const settingValidationSchema = yup.object({
+  username: yup.string().min(4, "Must be 4 character long").required(message),
+  oldPassword: yup
+    .string()
+    .min(4, "Must be 4 character long")
+    .required(message),
+  newPassword: yup.string().required(message),
+  confirmNewPassword: yup.string().required(message),
 });
 
 export const icons = [

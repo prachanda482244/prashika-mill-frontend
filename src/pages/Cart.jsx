@@ -22,7 +22,6 @@ const Cart = () => {
       return acc;
     }, {});
     setLocalQuantities(quantities);
-
     dispatch(fetchCartData());
   }, []);
 
@@ -67,8 +66,10 @@ const Cart = () => {
   const totalPrice = cartItems.products?.reduce((total, product) => {
     return total + product.product.price * localQuantities[product.product._id];
   }, 0);
+
+  console.log(cartItems);
   const handleCheckOut = () => {
-    if (cartItems.products.length == 0) {
+    if (cartItems.length === 0 || cartItems?.products.length === 0) {
       toast.error("No item in cart to order");
     } else {
       navigate("/order");
@@ -78,12 +79,13 @@ const Cart = () => {
   useEffect(() => {
     fetchCartData();
   }, [refresh]);
+  console.log(cartItems);
   return (
     <div className="flex font-light  pt-10 w-[80%] mx-auto p-3 flex-col">
       <div className="flex gap-16 ">
         <div className="w-2/3">
           <h1 className="text-xl border-b pb-2 font-semibold">My Cart</h1>
-          {cartItems?.products?.length !== 0 ? (
+          {cartItems?.products.length !== 0 ? (
             cartItems?.products?.map((products) => (
               <div
                 key={products.product._id}

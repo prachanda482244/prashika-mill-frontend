@@ -14,7 +14,7 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
       <Field name={name}>
         {({ field, form, meta }) => {
           return (
-            <div className="flex  relative flex-col p-4 ">
+            <div className="flex  relative flex-col">
               <label
                 className="capitalize tracking-wide font-medium flex gap-2 text-gray-500"
                 htmlFor={name}
@@ -41,12 +41,12 @@ const FormikInput = ({ name, label, required, type, ...props }) => {
               {type === "password" && (
                 <span
                   onClick={togglePasswordVisibility}
-                  className="absolute top-[60px] cursor-pointer right-10"
+                  className="absolute top-[40px] cursor-pointer right-10"
                 >
                   {isPasswordVisible ? <FaEye /> : <FaEyeSlash />}
                 </span>
               )}
-              <div className="h-2">
+              <div>
                 {meta.touched && meta.error && (
                   <div className="text-red-500  text-sm italic">
                     {meta.error}

@@ -21,6 +21,7 @@ import Products from "./pages/Products";
 import MostPopular from "./pages/MostPopular";
 import DashboardOrder from "./dashboard/components/DashboardOrder";
 import DashboardOrderDetails from "./dashboard/pages/DashboardOrderDetails";
+import ProfileSettings from "./pages/ProfileSettings";
 
 const App = () => {
   const location = useLocation();
@@ -55,6 +56,7 @@ const App = () => {
         <Route element={<ProtectedRoutes />}>
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/settings" element={<ProfileSettings />} />
           <Route path="/order" element={<Order />} />
         </Route>
 

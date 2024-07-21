@@ -20,19 +20,13 @@ const LoginForm = () => {
     try {
       const { data } = await AxiosInstance.post("/users/login", values);
       if (data.statusCode !== 200) return;
-      const userData = data.data.userData;
-      const token = data?.data?.token;
+      const userData = data.data;
       const role = userData.role;
-      console.log(userData);
-      dispatch(loginUser({ userData, token, role }));
+      dispatch(loginUser({ userData, role }));
       toast.success(data?.message);
-      if (userData?.role === "admin") {
-        navigate("/dashboard");
-      }
-      navigate("/profile");
     } catch (error) {
       toast.error("Invalid Credentials");
-      console.log(error.response.data);
+      console.log(error.request.response);
     }
   };
   return (
@@ -48,8 +42,17 @@ const LoginForm = () => {
             <Form className="  p-2">
               <div className="flex flex-col gap-2">
                 <div>
-                  <h1 className="font-semibold text-3xl pl-2 capitalize border-b pb-2">
+                  <h1 className="font-semibold flex justify-between items-center text-3xl px-2 capitalize border-b pb-2">
                     Sign In
+                    <p className="text-sm flex gap-3 text-gray-500 ">
+                      Dont have an account ?{" "}
+                      <Link
+                        to="/sign-up"
+                        className="underline text-blue-500 hover:text-blue-300"
+                      >
+                        Signup
+                      </Link>
+                    </p>
                   </h1>
                 </div>
                 <div>
@@ -72,19 +75,13 @@ const LoginForm = () => {
               <div className="flex items-center gap-4 justify-between px-4">
                 <button
                   type="submit"
-                  className="border-black hover:bg-slate-700  border duration-200 w-full py-1 bg-black text-white rounded-sm"
+                  className="border-black hover:bg-white hover:text-black  border duration-200 w-full py-1 bg-black text-white rounded-sm"
                 >
-                  {isSubmitting ? "loading" : "login"}
+                  {isSubmitting ? "loading" : "Sign in"}
                 </button>
-                <Link
-                  to="/sign-up"
-                  className="border-black hover:bg-slate-300 border duration-200 w-full text-center py-1 bg-white text-black rounded-sm"
-                >
-                  Signup
-                </Link>
               </div>
             </Form>
-            <div className="flex justify-center mt-2">
+            <div className="flex border-t pt-2 justify-center mt-2">
               <Link
                 to="/forgot-password"
                 className="hover:text-blue-500 hover:underline"
