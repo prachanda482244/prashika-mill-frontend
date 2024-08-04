@@ -9,6 +9,7 @@ const initialState = {
 };
 export const fetchCartData = createAsyncThunk("cart/item", async () => {
   const { data } = await AxiosInstance.get("/cart", { withCredentials: true });
+  console.log(data, "fetch function");
   return data.data;
 });
 
@@ -20,7 +21,8 @@ export const addToCart = createAsyncThunk(
       { product, quantity: 1 },
       { withCredentials: true }
     );
-    return data;
+    console.log(data, "add function");
+    return data.data;
   }
 );
 
@@ -32,7 +34,7 @@ export const removeFromCart = createAsyncThunk(
       {},
       { withCredentials: true }
     );
-    return data;
+    return data.data;
   }
 );
 export const updateCart = createAsyncThunk(
@@ -43,7 +45,7 @@ export const updateCart = createAsyncThunk(
       { quantity: parseInt(quantity) },
       { withCredentials: true }
     );
-    return data;
+    return data.data;
   }
 );
 export const clearCart = createAsyncThunk("cart/clear", async () => {
@@ -73,7 +75,6 @@ const cartSlice = createSlice({
       .addCase(addToCart.fulfilled, (state, action) => {
         state.status = "idle";
         state.cartItems = action.payload;
-        state.message = action.payload.message;
       })
       .addCase(updateCart.pending, (state) => {
         state.status = "loading";
@@ -81,7 +82,6 @@ const cartSlice = createSlice({
       .addCase(updateCart.fulfilled, (state, action) => {
         state.status = "idle";
         state.cartItems = action.payload;
-        state.message = action.payload.message;
       })
       .addCase(removeFromCart.pending, (state) => {
         state.status = "loading";

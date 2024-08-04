@@ -27,7 +27,7 @@ const MostPopular = ({ title, sliceStartIndex, sliceEndIndex }) => {
   const handleAddToCart = (product) => {
     console.log(product);
     dispatch(addToCart(product._id));
-    toast.success(message);
+    toast.success("Product added to cart");
   };
   useEffect(() => {
     getAllProducts();

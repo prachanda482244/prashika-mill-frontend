@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const { cartItems, message } = useSelector((state) => state.cart);
+  console.log(cartItems, "cartItems fuckS");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
@@ -38,6 +39,7 @@ const Cart = () => {
     setRefresh(!refresh);
   };
 
+  console.log(message, "mnessage");
   const handleIncrement = (productId) => {
     setLocalQuantities((prevQuantities) => ({
       ...prevQuantities,
@@ -45,7 +47,7 @@ const Cart = () => {
     }));
     let quantity = localQuantities[productId] + 1;
     dispatch(updateCart({ productId, quantity }));
-    toast.success(message);
+    toast.success("Product quantity increased by 1");
     setRefresh(!refresh);
   };
 
@@ -59,7 +61,8 @@ const Cart = () => {
       dispatch(
         updateCart({ productId, quantity: localQuantities[productId] - 1 })
       );
-      toast.success(message);
+      toast.success("Product quantity decreased by 1");
+
       setRefresh(!refresh);
     }
   };
@@ -79,13 +82,12 @@ const Cart = () => {
   useEffect(() => {
     fetchCartData();
   }, [refresh]);
-  console.log(cartItems);
   return (
     <div className="flex font-light  pt-10 w-[80%] mx-auto p-3 flex-col">
       <div className="flex gap-16 ">
         <div className="w-2/3">
           <h1 className="text-xl border-b pb-2 font-semibold">My Cart</h1>
-          {cartItems?.products.length !== 0 ? (
+          {cartItems.products && cartItems?.products?.length !== 0 ? (
             cartItems?.products?.map((products) => (
               <div
                 key={products.product._id}
@@ -95,7 +97,10 @@ const Cart = () => {
                   <div className="flex gap-4 w-72">
                     <div className="bg-[#f5f5f0] py-10 px-5">
                       <img
-                        src={products.product.images[0]?.url}
+                        src={
+                          products.product.images &&
+                          products.product?.images[0].url
+                        }
                         alt="Cart item"
                         className="h-14 w-14 object-cover rounded-sm"
                       />

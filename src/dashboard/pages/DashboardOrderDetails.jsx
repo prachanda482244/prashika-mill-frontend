@@ -20,7 +20,7 @@ const DashboardOrderDetails = () => {
         toast.error("Failed to fetch order details");
       }
     } catch (error) {
-      toast.error("An error occurred while fetching order details");
+      toast.error("No order available");
     } finally {
       setIsLoading(false);
     }
@@ -70,9 +70,9 @@ const DashboardOrderDetails = () => {
           </div>
           <p className="text-gray-300">{userOrder.paymentMethod}</p>
 
-          <div className="font-light border rounded-md px-5 py-2">
-            <div className="flex justify-between gap-2">
-              <div className="w-1/2 flex flex-col gap-3">
+          <div className="font-light rounded-md px-5 py-2">
+            <div className="flex flex-col justify-between gap-2">
+              <div className=" flex flex-col gap-3">
                 <div>
                   <h5 className="font-semibold text-lg">General</h5>
                 </div>
@@ -138,16 +138,16 @@ const DashboardOrderDetails = () => {
                   <p>{userOrder.notes || "User order notes here "}</p>
                 </div>
               </div>
-
-              <div className="flex px-5 w-1/2 flex-col">
-                <h4 className="font-bold text-lg font-serif tracking-wider">
+              <div className="border-b w-full py-2"></div>
+              <div className="flex flex-col">
+                <h4 className="font-bold py-3 text-xl tracking-wider">
                   Product details
                 </h4>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap justifyevenly gap-5">
                   {userOrder.product?.map((item, index) => (
                     <div
                       key={index}
-                      className="border rounded-lg border-blue-400 px-6 py-2 flex gap-2 cursor-pointer"
+                      className="border rounded-lg hover:border-blue-800 border-blue-400 px-6 py-2 flex gap-2 w-[45%] cursor-pointer"
                     >
                       <div className="w-52">
                         <img
