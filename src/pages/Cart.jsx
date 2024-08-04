@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const { cartItems, message } = useSelector((state) => state.cart);
-  console.log(cartItems, "cartItems fuckS");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
@@ -70,7 +69,6 @@ const Cart = () => {
     return total + product.product.price * localQuantities[product.product._id];
   }, 0);
 
-  console.log(cartItems);
   const handleCheckOut = () => {
     if (cartItems.length === 0 || cartItems?.products.length === 0) {
       toast.error("No item in cart to order");

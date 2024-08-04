@@ -9,7 +9,6 @@ const initialState = {
 };
 export const fetchCartData = createAsyncThunk("cart/item", async () => {
   const { data } = await AxiosInstance.get("/cart", { withCredentials: true });
-  console.log(data, "fetch function");
   return data.data;
 });
 
@@ -21,7 +20,6 @@ export const addToCart = createAsyncThunk(
       { product, quantity: 1 },
       { withCredentials: true }
     );
-    console.log(data, "add function");
     return data.data;
   }
 );
