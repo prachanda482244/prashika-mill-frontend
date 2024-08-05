@@ -17,7 +17,6 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
-    setIsOpen((prev) => !prev);
     const { data } = await AxiosInstance.post("/users/logout", {});
     toast.success(data?.message);
     dispatch(logoutUser());
@@ -28,187 +27,10 @@ const Navbar = () => {
   }, [status]);
 
   return (
-    <nav className="flex sm:flex-row py-2  flex-col sm:py-16  items-center sm:px-20 font-normal   w-full justify-between ">
-      <div className="flex items-center   w-full justify-between">
-        <div className="sm:flex  hidden  uppercase tracking-wide items-center gap-10">
-          {navlinks_1?.map((link) => (
-            <NavLink
-              className={({ isActive }) =>
-                `${isActive ? "text-teal-500" : ""} hover:text-teal-300`
-              }
-              key={link.id}
-              to={link.path}
-            >
-              {link.name}
-            </NavLink>
-          ))}
-        </div>
-
-        <div>
-          <NavLink
-            className=" border-2 sm:border-4 font-medium text-xs sm:text-2xl px-1 py-2 border-black uppercase"
-            to="/"
-          >
-            Prashika Mil
-          </NavLink>
-        </div>
-
-        <div className="sm:flex hidden relative items-center gap-2">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="sm:w-60 w-40   border-b-2 sm:mr-8 border-black px-8 hover:border-2 outline-none sm:py-2 placeholder:text-black"
-          />
-          <CiSearch className="absolute left-0 text-2xl " />
-
-          <ul
-            className={`sm:flex  sm:flex-row flex-col gap-3 text-xl items-center hidden `}
-          >
-            {navlinks_2.map(
-              (link) =>
-                link.isVisible(isLoggedIn) && (
-                  <NavLink
-                    key={link.id}
-                    to={link.path}
-                    className={({ isActive }) =>
-                      `${isActive ? "text-teal-500" : ""} 
-                       ${
-                         link.name === "profile" ? "uppercase" : ""
-                       } hover:text-teal-300 flex items-center gap-3 font-light tracking-wide`
-                    }
-                    onClick={
-                      link.id === 6
-                        ? handleLogout
-                        : () => {
-                            setIsOpen((prev) => !prev);
-                          }
-                    }
-                  >
-                    <div className="relative">
-                      {link.name === "profile" ? (
-                        ""
-                      ) : (
-                        <span
-                          className={` ${
-                            link.id !== 5 ? "text-lg" : "text-xl  text-black"
-                          } flex items-center justify-center bg-gray-500 rounded-full text-white p-3 `}
-                        >
-                          {<link.icons />}
-                        </span>
-                      )}
-                      {link.id === 5 ? (
-                        <span className="absolute text-xs  text-white h-5 w-5 text-center rounded-full top-7 font-bold left-5">
-                          {cartItems ? cartItems?.products?.length : 0}
-                        </span>
-                      ) : null}
-                    </div>
-                    <span className="text-base">
-                      {link.name === "profile" ? userData?.username : link.name}
-                    </span>
-                  </NavLink>
-                )
-            )}
-          </ul>
-        </div>
-
-        <div className="sm:hidden" onClick={() => setIsOpen((prev) => !prev)}>
-          <div className="sm:hidden flex items-center">
-            {navlinks_2.map(
-              (link) =>
-                link.isVisible(isLoggedIn) && (
-                  <NavLink
-                    key={link.id}
-                    to={link.path}
-                    className={({ isActive }) =>
-                      `${isActive ? "text-teal-500" : ""} 
-                       ${
-                         link.name === "profile" ? "uppercase" : ""
-                       } hover:text-teal-300 flex items-center  font-light tracking-wide`
-                    }
-                    onClick={
-                      link.id === 6
-                        ? handleLogout
-                        : () => {
-                            setIsOpen((prev) => !prev);
-                          }
-                    }
-                  >
-                    <div className="relative">
-                      {link.name === "profile" ? (
-                        ""
-                      ) : (
-                        <span
-                          className={` ${
-                            link.id !== 5 ? "text-md" : "text-xl  text-black"
-                          } flex items-center justify-center bg-gray-500 rounded-full text-white p-3 `}
-                        >
-                          {<link.icons />}
-                        </span>
-                      )}
-                      {link.id === 5 ? (
-                        <span className="absolute text-xs  text-white h-5 w-5 text-center rounded-full top-7 font-bold left-5">
-                          {cartItems ? cartItems?.products?.length : 0}
-                        </span>
-                      ) : null}
-                    </div>
-                  </NavLink>
-                )
-            )}
-          </div>
-          {isOpen ? (
-            <GiHamburgerMenu className="h-5 w-5 cursor-pointer" />
-          ) : (
-            <RxCross1 className="h-5 w-5 cursor-pointer" />
-          )}
-        </div>
-      </div>
-      {/* {!isOpen && (
-        <div className="bg-[#d7d7cb] min-h-screen min-w-full">
-          <div className="flex flex-col gap-5 items-center text-left py-10">
-            {navlinks_2.map(
-              (link) =>
-                link.isVisible(isLoggedIn) && (
-                  <NavLink
-                    key={link.id}
-                    to={link.path}
-                    className={({ isActive }) =>
-                      `${isActive ? "text-teal-500" : ""} 
-                       ${
-                         link.name === "profile" ? "uppercase" : ""
-                       } hover:text-teal-300 flex items-center gap-3 font-light tracking-wide`
-                    }
-                    onClick={
-                      link.id === 6
-                        ? handleLogout
-                        : () => {
-                            setIsOpen((prev) => !prev);
-                          }
-                    }
-                  >
-                    <div className="relative">
-                      {link.name === "profile" ? (
-                        ""
-                      ) : (
-                        <span
-                          className={` ${
-                            link.id !== 5 ? "text-lg" : "text-xl  text-black"
-                          } flex items-center justify-center bg-gray-500 rounded-full text-white p-3 `}
-                        >
-                          {<link.icons />}
-                        </span>
-                      )}
-                      {link.id === 5 ? (
-                        <span className="absolute text-xs  text-white h-5 w-5 text-center rounded-full top-7 font-bold left-5">
-                          {cartItems ? cartItems?.products?.length : 0}
-                        </span>
-                      ) : null}
-                    </div>
-                    <span className="text-base">
-                      {link.name === "profile" ? userData?.username : link.name}
-                    </span>
-                  </NavLink>
-                )
-            )}
+    <nav className="flex sm:flex-row py-2  flex-col lg:py-16  items-center lg:px-20 font-normal   w-full justify-between ">
+      <div className="flex flex-col justify-between md:flex-row p-2 w-full ">
+        {isOpen && (
+          <div className="flex mt-2 sm:mt-0 order-2 md:order-1 flex-col md:flex-row  sm:flex uppercase tracking-wide  items-center text-xs lg:text-base sm:w-full gap-5 md:w-1/2 lg:w-[70%]  lg:gap-10">
             {navlinks_1?.map((link) => (
               <NavLink
                 className={({ isActive }) =>
@@ -221,8 +43,91 @@ const Navbar = () => {
               </NavLink>
             ))}
           </div>
+        )}
+
+        <div className="flex order-1 md:order-2  items-center w-full justify-between  md:gap-10">
+          <div>
+            <NavLink
+              className=" border-2 sm:border-4 font-medium sm:text-xs md:text-sm lg:text-xl px-1 py-2 border-black uppercase"
+              to="/"
+            >
+              Prashika Mil
+            </NavLink>
+          </div>
+
+          <div className="md:hidden">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-20  border-b-2 sm:mr-8 border-black hover:border-2 outline-none sm:py-2 placeholder:text-black"
+            />
+          </div>
+
+          <div className="md:hidden flex items-center">
+            <button onClick={() => setIsOpen(!isOpen)}>
+              {isOpen ? (
+                <RxCross1 className="h-7 w-7 cursor-pointer" />
+              ) : (
+                <GiHamburgerMenu className="h-7 w-7 cursor-pointer" />
+              )}
+            </button>
+          </div>
+
+          <div className="md:flex hidden relative items-center gap-2">
+            <ul className="sm:flex  sm:flex-row flex-col lg:gap-3 text-xs  lg:text-xl items-center ">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="lg:w-40 w-10  border-b-2 sm:mr-8 border-black px-8 hover:border-2 outline-none sm:py-2 placeholder:text-black"
+              />
+              <CiSearch className="absolute text-sm left-0 lg:text-2xl " />
+
+              {navlinks_2.map(
+                (link) =>
+                  link.isVisible(isLoggedIn) && (
+                    <NavLink
+                      key={link.id}
+                      to={link.path}
+                      className={({ isActive }) =>
+                        `${isActive ? "text-teal-500" : ""} 
+                       ${
+                         link.name === "profile" ? "uppercase" : ""
+                       } hover:text-teal-300 flex items-center gap-3 font-light tracking-wide`
+                      }
+                      onClick={link.id === 6 && handleLogout}
+                    >
+                      <div className="relative">
+                        {link.name === "profile" ? (
+                          ""
+                        ) : (
+                          <span
+                            className={` ${
+                              link.id !== 5
+                                ? "text-xs lg:text-xl"
+                                : "text-xs lg:text-xl  text-black"
+                            } flex items-center justify-center bg-gray-500 rounded-full text-white p-2 `}
+                          >
+                            {<link.icons />}
+                          </span>
+                        )}
+                        {link.id === 5 ? (
+                          <span className="absolute text-xs  text-white h-5 w-5 text-center rounded-full top-7 font-bold left-5">
+                            {cartItems ? cartItems?.products?.length : 0}
+                          </span>
+                        ) : null}
+                      </div>
+                      <span className="text-base">
+                        {link.name === "profile"
+                          ? userData?.username
+                          : link.name}
+                      </span>
+                    </NavLink>
+                  )
+              )}
+            </ul>
+          </div>
         </div>
-      )} */}
+      </div>
     </nav>
   );
 };
