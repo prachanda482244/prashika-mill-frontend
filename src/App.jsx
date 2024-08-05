@@ -32,7 +32,7 @@ const App = () => {
       <Toaster />
       {!hideNavbar && <Navbar />}
       <Routes>
-        {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/" element={<Home />} />
         <Route path="/sign-up" element={<RegisterForm />} />
         <Route path="/sign-in" element={<LoginForm />} />
         <Route
@@ -83,7 +83,7 @@ const App = () => {
           </Route>
         </Route>
       </Routes>
-      {/* {!hideNavbar && <Footer />} */}
+      {!hideNavbar && <Footer />}
     </div>
   );
 };
