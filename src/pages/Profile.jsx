@@ -131,7 +131,7 @@ const Profile = () => {
                     {order.products.map((item) => {
                       const isKg = item.quantityInKg > 0;
                       const quantity = isKg ? item.quantityInKg : item.quantity;
-                      const pricePerUnit = isKg ? item.product.pricePerKg : item.product.price;
+                      const pricePerUnit = isKg ? item?.product?.pricePerKg : item?.product?.price;
 
                       return (
                         <div
@@ -140,15 +140,15 @@ const Profile = () => {
                         >
                           <div className="flex-shrink-0 h-16 w-16 overflow-hidden rounded-md border border-gray-200">
                             <img
-                              src={item.product.images[0]?.url}
-                              alt={item.product.title}
+                              src={item?.product?.images[0]?.url}
+                              alt={item?.product?.title}
                               className="h-full w-full object-cover object-center"
                             />
                           </div>
                           <div className="ml-4 flex-1">
                             <div className="flex justify-between">
                               <h4 className="text-sm font-medium text-gray-900 line-clamp-1">
-                                {item.product.title}
+                                {item?.product?.title}
                               </h4>
                               <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${isKg ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
                                 }`}>
@@ -160,9 +160,9 @@ const Profile = () => {
                                 {quantity} {isKg ? 'kg' : ''} × Rs. {pricePerUnit}
                               </span>
                               <span className="mx-2">•</span>
-                              <span className={`text-xs px-2 py-0.5 rounded-full ${item.product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${item.product?.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                 }`}>
-                                {item.product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                                {item.product?.stock > 0 ? 'In Stock' : 'Out of Stock'}
                               </span>
                             </div>
                           </div>

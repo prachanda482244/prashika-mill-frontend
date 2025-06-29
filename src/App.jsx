@@ -26,6 +26,7 @@ import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import OurStory from "./pages/OurStory";
 import OrderSuccess from "./pages/OrderSuccess";
+import SearchPage from "./pages/SearchPage";
 
 const App = () => {
   const location = useLocation();
@@ -37,6 +38,7 @@ const App = () => {
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/sign-up" element={<RegisterForm />} />
         <Route path="/sign-in" element={<LoginForm />} />
         <Route

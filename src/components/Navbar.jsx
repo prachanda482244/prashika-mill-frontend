@@ -9,12 +9,16 @@ import toast from "react-hot-toast";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { RxCross1 } from "react-icons/rx";
 import { fetchCartData } from "../store/slices/cartSlice";
+import SearchResultsDropdown from "./SearchResultsDropdown"; // New component
 
 const Navbar = () => {
   const { isLoggedIn, userData } = useSelector((state) => state.user);
   const { cartItems, status } = useSelector((state) => state.cart);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -29,8 +33,53 @@ const Navbar = () => {
     dispatch(fetchCartData());
   }, [status]);
 
+  // Search products with debounce
+  useEffect(() => {
+    const searchProducts = async () => {
+      if (searchQuery.trim() === "") {
+        setSearchResults([]);
+        setShowSearchResults(false);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const { data } = await AxiosInstance.get(`/product/search?query=${searchQuery}`);
+        if (data.success) {
+          setSearchResults(data.data);
+          setShowSearchResults(true);
+        }
+      } catch (error) {
+        toast.error("Error searching products");
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(() => {
+      searchProducts();
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?query=${searchQuery}`);
+      setShowSearchResults(false);
+      setSearchQuery("");
+    }
+  };
+
+  const handleResultClick = (productId) => {
+    navigate(`/product/${productId}`);
+    setShowSearchResults(false);
+    setSearchQuery("");
+  };
+
   return (
-    <nav className="w-full bg-white shadow-sm">
+    <nav className="w-full bg-white shadow-sm relative">
       {/* Top Bar - Logo and Mobile Menu Button */}
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
@@ -59,9 +108,6 @@ const Navbar = () => {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center space-x-4">
-          {/* Mobile Search Icon - Could implement search functionality */}
-          <CiSearch className="h-5 w-5 cursor-pointer" />
-
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? (
               <RxCross1 className="h-6 w-6" />
@@ -74,16 +120,29 @@ const Navbar = () => {
         {/* Desktop Navigation - Secondary Links */}
         <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
           {/* Search Bar */}
-          <div className="relative hidden lg:block">
+          <form onSubmit={handleSearchSubmit} className="relative">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-40 border-b-2 border-black px-2 py-1 outline-none placeholder:text-gray-700"
+              onFocus={() => searchQuery && setShowSearchResults(true)}
+              onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
+              className="w-40 lg:w-56 border-b-2 border-black px-2 py-1 outline-none placeholder:text-gray-700"
             />
-            <CiSearch className="absolute right-2 top-2" />
-          </div>
+            <button type="submit" className="absolute right-2 top-2">
+              <CiSearch className="h-4 w-4" />
+            </button>
+
+            {/* Search Results Dropdown */}
+            {showSearchResults && (
+              <SearchResultsDropdown
+                results={searchResults}
+                isLoading={isSearching}
+                onResultClick={handleResultClick}
+              />
+            )}
+          </form>
 
           {/* Account Links */}
           <ul className="flex items-center space-x-4">
@@ -131,16 +190,40 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white py-4 px-4 border-t border-gray-200">
           {/* Mobile Search */}
-          <div className="relative mb-4">
+          <form onSubmit={handleSearchSubmit} className="relative mb-4">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full border-b-2 border-black px-2 py-1 outline-none placeholder:text-gray-700"
             />
-            <CiSearch className="absolute right-2 top-2" />
-          </div>
+            <button type="submit" className="absolute right-2 top-2">
+              <CiSearch className="h-5 w-5" />
+            </button>
+
+            {/* Mobile Search Results Dropdown */}
+            {showSearchResults && (
+              <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-60 overflow-y-auto">
+                {isSearching ? (
+                  <div className="p-3 text-center">Searching...</div>
+                ) : searchResults.length > 0 ? (
+                  searchResults.map((product) => (
+                    <div
+                      key={product._id}
+                      className="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100"
+                      onClick={() => handleResultClick(product._id)}
+                    >
+                      <div className="font-medium">{product.title}</div>
+                      <div className="text-sm text-gray-600 truncate">{product.description}</div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-3 text-gray-500">No products found</div>
+                )}
+              </div>
+            )}
+          </form>
 
           {/* Primary Links */}
           <div className="flex flex-col space-y-3 mb-4">

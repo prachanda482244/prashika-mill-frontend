@@ -10,8 +10,11 @@ const Cart = () => {
   const [editModes, setEditModes] = useState({});
   const [inputValues, setInputValues] = useState({});
   const [quantityTypes, setQuantityTypes] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [updatingItems, setUpdatingItems] = useState({});
 
   const getCartDetails = async () => {
+    setIsLoading(true);
     try {
       const { data } = await AxiosInstance.get('/cart');
       setCartItems(data?.data);
@@ -24,6 +27,8 @@ const Cart = () => {
       setQuantityTypes(types);
     } catch (error) {
       toast.error("Failed to load cart items");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -35,17 +40,23 @@ const Cart = () => {
 
   const handleRemove = async (product) => {
     try {
+      setUpdatingItems(prev => ({ ...prev, [product.product._id]: true }));
       const { data } = await AxiosInstance.delete(`/cart/p/${product?.product?._id}`);
       setCartItems(data?.data);
       toast.success("Item removed from cart");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to remove item");
+    } finally {
+      setUpdatingItems(prev => ({ ...prev, [product.product._id]: false }));
     }
   };
 
   const handleQuantityChange = async (product, newValue) => {
     try {
-      const isKgMode = quantityTypes[product.product._id] === 'kg';
+      const productId = product.product._id;
+      setUpdatingItems(prev => ({ ...prev, [productId]: true }));
+
+      const isKgMode = quantityTypes[productId] === 'kg';
 
       if (!newValue || newValue === 0) {
         await handleRemove(product);
@@ -57,13 +68,15 @@ const Cart = () => {
         : { quantity: +newValue, quantityInKg: 0 };
 
       const { data } = await AxiosInstance.post(
-        `/cart/p/${product.product._id}`,
+        `/cart/p/${productId}`,
         payload
       );
       setCartItems(data?.data);
-      setEditModes(prev => ({ ...prev, [product.product._id]: false }));
+      setEditModes(prev => ({ ...prev, [productId]: false }));
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to update quantity");
+    } finally {
+      setUpdatingItems(prev => ({ ...prev, [product.product._id]: false }));
     }
   };
 
@@ -103,12 +116,15 @@ const Cart = () => {
   const handleClearCart = async () => {
     try {
       if (window.confirm("Are you sure you want to clear your cart?")) {
+        setIsLoading(true);
         await AxiosInstance.delete("/cart/clear-cart");
         setCartItems([]);
         toast.success("Cart cleared successfully");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to clear cart");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -118,6 +134,20 @@ const Cart = () => {
       [productId]: prev[productId] === 'kg' ? 'quantity' : 'kg'
     }));
   };
+
+  if (isLoading && !cartItems?.products) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 className="text-3xl font-light text-gray-800 mb-8">Your Shopping Cart</h1>
+        <div className="bg-white rounded-lg shadow-sm p-8 flex justify-center items-center h-64">
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mb-4"></div>
+            <p className="text-gray-600">Loading your cart...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -135,9 +165,17 @@ const Cart = () => {
                 const stock = isKgMode ? item.product.stockInKg : item.product.stock;
                 const price = isKgMode ? item.product.pricePerKg : item.product.price;
                 const isEditMode = editModes[productId];
+                const isUpdating = updatingItems[productId];
 
                 return (
-                  <div key={productId} className="p-6 flex flex-col sm:flex-row gap-6">
+                  <div key={productId} className="p-6 flex flex-col sm:flex-row gap-6 relative">
+                    {/* Loading overlay for item */}
+                    {isUpdating && (
+                      <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10 rounded-lg">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-amber-500"></div>
+                      </div>
+                    )}
+
                     <div className="flex-shrink-0">
                       <img
                         src={item?.product?.images?.[0]?.url}
@@ -164,6 +202,7 @@ const Cart = () => {
                                 ? "bg-amber-500 text-white"
                                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                               }`}
+                            disabled={isUpdating}
                           >
                             Quantity
                           </button>
@@ -173,6 +212,7 @@ const Cart = () => {
                                 ? "bg-amber-500 text-white"
                                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                               }`}
+                            disabled={isUpdating}
                           >
                             Kg
                           </button>
@@ -196,6 +236,7 @@ const Cart = () => {
                                 onChange={(e) => handleInputChange(productId, e.target.value)}
                                 className="w-20 px-3 py-1 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
                                 autoFocus
+                                disabled={isUpdating}
                               />
                               <div className="flex gap-1">
                                 <button
@@ -204,12 +245,19 @@ const Cart = () => {
                                     inputValues[productId] || 1
                                   )}
                                   className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600"
+                                  disabled={isUpdating}
                                 >
-                                  Save
+                                  {isUpdating ? (
+                                    <div className="flex items-center">
+                                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+                                      Saving
+                                    </div>
+                                  ) : 'Save'}
                                 </button>
                                 <button
                                   onClick={() => toggleEditMode(productId, currentValue)}
                                   className="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                                  disabled={isUpdating}
                                 >
                                   Cancel
                                 </button>
@@ -221,20 +269,20 @@ const Cart = () => {
                                 <button
                                   onClick={() => handleDecrement(item)}
                                   className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                                  disabled={currentValue <= 1}
+                                  disabled={currentValue <= 1 || isUpdating}
                                 >
                                   -
                                 </button>
                                 <span
                                   className="px-4 py-1 cursor-pointer min-w-[40px] text-center"
-                                  onClick={() => toggleEditMode(productId, currentValue)}
+                                  onClick={() => !isUpdating && toggleEditMode(productId, currentValue)}
                                 >
                                   {currentValue}
                                 </span>
                                 <button
                                   onClick={() => handleIncrement(item)}
                                   className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                                  disabled={currentValue >= stock}
+                                  disabled={currentValue >= stock || isUpdating}
                                 >
                                   +
                                 </button>
@@ -246,10 +294,15 @@ const Cart = () => {
                         <button
                           onClick={() => handleRemove(item)}
                           className="text-red-500 hover:text-red-700"
+                          disabled={isUpdating}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
+                          {isUpdating ? (
+                            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-red-500"></div>
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          )}
                         </button>
                       </div>
                     </div>
@@ -261,8 +314,16 @@ const Cart = () => {
                 <button
                   onClick={handleClearCart}
                   className="text-sm text-red-500 hover:text-red-700"
+                  disabled={isLoading}
                 >
-                  Clear Cart
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-red-500 mr-2"></div>
+                      Clearing...
+                    </div>
+                  ) : (
+                    'Clear Cart'
+                  )}
                 </button>
               </div>
             </div>
@@ -310,8 +371,14 @@ const Cart = () => {
               <button
                 onClick={handleCheckOut}
                 className="mt-6 w-full bg-amber-500 py-3 px-4 border border-transparent rounded-md shadow-sm text-white font-medium hover:bg-amber-600 focus:outline-none"
+                disabled={isLoading}
               >
-                Proceed to Checkout
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
+                    Processing...
+                  </div>
+                ) : 'Proceed to Checkout'}
               </button>
             </div>
 

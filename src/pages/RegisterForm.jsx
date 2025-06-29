@@ -6,9 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AxiosInstance from "../config/AxiosInstance";
 import FormikFile from "../formik/FormikFile";
+import { loginUser } from "../store/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const initialValues = {
     username: "",
@@ -28,11 +31,11 @@ const RegisterForm = () => {
       const { data } = await AxiosInstance.post("/users/register", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
+      dispatch(loginUser({ userData: data.data, role: data.data.role }));
       if (data?.statusCode === 201) {
         toast.success("Registration successful");
         resetForm();
-        navigate("/sign-in");
+        navigate("/");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Registration failed");

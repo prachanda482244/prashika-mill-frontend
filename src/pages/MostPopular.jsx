@@ -50,7 +50,7 @@ const MostPopular = ({ title, sliceStartIndex, sliceEndIndex }) => {
       setProductQuantities(prev => ({ ...prev, [productId]: "" }));
       setProductKgQuantities(prev => ({ ...prev, [productId]: "" }));
     } catch (error) {
-      toast.error("Failed to add to cart");
+      toast.error("Login to add to cart");
     }
   };
 
