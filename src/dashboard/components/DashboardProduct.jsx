@@ -3,6 +3,7 @@ import AxiosInstance from "../../config/AxiosInstance";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 
 const DashboardProduct = () => {
   const [products, setProducts] = useState([]);
@@ -10,6 +11,7 @@ const DashboardProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { search } = useSelector((state) => state.search);
+
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -37,7 +39,7 @@ const DashboardProduct = () => {
         );
         if (data.statusCode === 200) {
           toast.success(data.message);
-          setRefresh(!refresh); // Trigger refetch
+          setRefresh(!refresh);
         } else {
           toast.error("Failed to delete product");
         }
@@ -50,84 +52,110 @@ const DashboardProduct = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [refresh]);
+  }, [refresh, fetchProducts]);
 
   const filteredProductItem = filteredProducts.filter((product) =>
     product.title.toLowerCase().includes(search?.toLowerCase())
   );
+
   useEffect(() => {
     if (search.trim() === "") {
       setFilteredProduct(products);
     } else {
       setFilteredProduct(filteredProductItem);
     }
-  }, [search]);
+  }, [search, products, filteredProductItem]);
+
   if (isLoading) {
     return (
-      <div className="flex items-center text-2xl font-bold justify-center animate-pulse">
-        Loading products
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4 bg-gray-50">
-      <h1 className="text-2xl flex items-center justify-between font-semibold mb-4">
-        My items
-        <button className="text-white rounded-lg bg-red-500 text-base px-4 py-2 tracking-wider">
-          Delete Products
-        </button>
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="p-4 border-2 md:p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-4 sm:mb-0">
+          My Products
+        </h1>
+        <div className="flex space-x-4">
+          <button className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm md:text-base">
+            Delete Selected
+          </button>
+          <Link
+            to="/dashboard/products/create"
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm md:text-base"
+          >
+            Add New
+          </Link>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+        {/* Create New Product Card */}
         <Link
           to="/dashboard/products/create"
-          className="border-2 cursor-pointer border-dashed border-gray-300 flex items-center justify-center p-4 flex-col rounded-lg"
+          className="border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-xl p-6 flex flex-col items-center justify-center transition-colors cursor-pointer h-full min-h-[200px]"
         >
-          <span className="text-gray-400">Create a new product.</span>
-          <span className="text-5xl">+</span>
+          <FiPlus className="text-4xl text-gray-400 mb-2" />
+          <span className="text-gray-500 text-center">Create new product</span>
         </Link>
-        {filteredProducts && filteredProducts.length !== 0 ? (
+
+        {/* Product Cards */}
+        {filteredProducts && filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
             <div
               key={product._id}
-              className="relative border rounded-lg p-4 bg-white shadow"
+              className="relative  border-gray-200 rounded-xl p-4 bg-white hover:shadow-md transition-shadow h-full flex  flex-col"
             >
-              <input type="checkbox" className="absolute top-2 left-2" />
-              <div className="flex flex-col items-center">
+              <input
+                type="checkbox"
+                className="absolute top-3 left-3 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+
+              <div className="flex-1 flex flex-col">
                 {product.images[0]?.url && (
                   <img
                     src={product.images[0].url}
                     alt={product.title}
-                    className="w-full h-32 object-cover rounded-lg mb-2"
+                    className="w-full h-40 object-cover rounded-lg mb-3"
                   />
                 )}
-                <h2 className="text-lg font-semibold truncate">
+
+                <h2 className="text-lg font-medium text-gray-800 mb-1 line-clamp-1">
                   {product.title}
                 </h2>
-                <p className="text-blue-500 truncate">Rs:{product.price}</p>
-                <p className="text-sm text-gray-500">
-                  Quantity :{product.quantity}
+                <p className="text-blue-600 font-semibold mb-2">
+                  Rs: {product.price}
                 </p>
-                <p className="text-sm flex items-center justify-between w-full text-gray-500">
-                  <Link
-                    className="bg-blue-500 hover:bg-blue-700 py-2 px-5 text-white tracking-wide"
-                    to={`/dashboard/products/edit/${product._id}`}
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(product._id)}
-                    className="bg-red-500 py-2 px-5 hover:bg-red-800 text-white tracking-wide"
-                  >
-                    Delete
-                  </button>
+                <p className="text-sm text-gray-500 mb-4">
+                  Stock: {product.stock}
                 </p>
+              </div>
+
+              <div className="flex justify-between space-x-2 mt-auto">
+                <Link
+                  to={`/dashboard/products/edit/${product._id}`}
+                  className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 px-2 sm:px-3 rounded-lg transition-colors text-sm w-full"
+                >
+                  <FiEdit2 className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden xs:inline">Edit</span>
+                </Link>
+                <button
+                  onClick={() => handleDelete(product._id)}
+                  className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 py-2 px-2 sm:px-3 rounded-lg transition-colors text-sm w-full"
+                >
+                  <FiTrash2 className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden xs:inline">Delete</span>
+                </button>
               </div>
             </div>
           ))
         ) : (
-          <div className="flex items-center justify-center text-2xl ">
-            No product found
+          <div className="col-span-full flex items-center justify-center py-12 text-gray-500">
+            No products found
           </div>
         )}
       </div>

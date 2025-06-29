@@ -1,6 +1,7 @@
 import Button from "./Button";
+
 const Image_with_text = ({
-  order,
+  imagePosition = "left", // Default to left if not specified
   title,
   paragraph,
   buttonName,
@@ -8,26 +9,36 @@ const Image_with_text = ({
   imagseSrc,
 }) => {
   return (
-    <div className="container border-2 flex-col md:flex-row  py-20 flex gap-4 justify-center mx-auto md:px-24 px-10">
-      <div
-        className={`flex gap-5 md:gap-16 order-2 md:order-1 w-full md:w-2/5 ${
-          order ? order : ""
-        }  flex-col`}
-      >
-        <h1 className="md:text-3xl whitespace-pre-line leading-relaxed tracking-wider break-words uppercase font-normal">
-          {title}
-        </h1>
-        <p className="font-normal md:leading-7 md:tracking-wide">{paragraph}</p>
-        <div className="md:w-1/2 ">
-          <Button to={to} name={buttonName} bg="bg-transparent" />
-        </div>
-      </div>
-      <div className="md:order-2 order-1">
+    <div className={`flex flex-col md:flex-row gap-8 lg:gap-12 xl:gap-16 items-center
+                    ${imagePosition === "right" ? "md:flex-row-reverse" : ""}
+                    py-10 py-14 lg:py-16 px-4 sm:px-6`}>
+      {/* Image Section */}
+      <div className="w-full md:w-1/2 lg:w-2/5">
         <img
           src={imagseSrc}
-          className="md:h-[700px] h-[450px]  rounded-lg w-full md:w-[450px] object-cover"
+          className="w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] xl:h-[500px]
+                    object-cover rounded-lg shadow-md"
           alt="Products"
         />
+      </div>
+
+      {/* Text Content Section */}
+      <div className="w-full md:w-1/2 lg:w-3/5 space-y-4 md:space-y-6">
+        <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl
+                      uppercase tracking-wider font-normal leading-tight">
+          {title}
+        </h1>
+        <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-[15px] lg:text-base">
+          {paragraph}
+        </p>
+        <div className="w-full sm:w-1/2 md:w-2/5 lg:w-2/5">
+          <Button
+            to={to}
+            name={buttonName}
+            className="w-full text-center"
+            bg="bg-transparent"
+          />
+        </div>
       </div>
     </div>
   );

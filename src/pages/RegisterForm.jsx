@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { Form, Formik } from "formik";
 import FormikInput from "../formik/FormikInput";
 import { registrationValidationSchema } from "../constants/constants";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AxiosInstance from "../config/AxiosInstance";
 import FormikFile from "../formik/FormikFile";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+
   const initialValues = {
     username: "",
     email: "",
@@ -22,94 +23,86 @@ const RegisterForm = () => {
       formData.append("username", values.username);
       formData.append("email", values.email);
       formData.append("password", values.password);
-      formData.append("avatar", values.avatar);
+      if (values.avatar) formData.append("avatar", values.avatar);
 
       const { data } = await AxiosInstance.post("/users/register", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (data?.statusCode === 201) {
         toast.success("Registration successful");
         resetForm();
         navigate("/sign-in");
-      } else {
-        toast.error("Registration failed");
       }
     } catch (error) {
-      toast.error(error.response?.data || "An error occurred");
-      console.error(error);
+      toast.error(error.response?.data?.message || "Registration failed");
     }
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={registrationValidationSchema}
-      onSubmit={formSubmit}
-      enableReinitialize={true}
-    >
-      {({ isSubmitting }) => (
-        <div className="py-2 border  border-black mx-auto w-full md:w-1/2">
-          <Form className="p-2">
-            <div className="flex flex-col">
-              <h1 className="font-semibold flex justify-between items-center text-3xl px-2 capitalize border-b pb-2">
-                Sign Up
-                <p className="text-sm flex gap-3 text-gray-500 ">
-                  Already have an account ?{" "}
-                  <Link
-                    to="/sign-in"
-                    className="underline text-blue-500 hover:text-blue-300"
-                  >
-                    Signin
+    <div className="max-w-md mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+        <Formik
+          initialValues={initialValues}
+          validationSchema={registrationValidationSchema}
+          onSubmit={formSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className="p-6">
+              <div className="flex justify-between items-center pb-4 mb-6 border-b">
+                <h1 className="text-2xl font-bold text-gray-800">Create Account</h1>
+                <p className="text-sm text-gray-600">
+                  Have an account?{" "}
+                  <Link to="/sign-in" className="text-blue-600 hover:underline">
+                    Sign in
                   </Link>
                 </p>
-              </h1>
-              <div className="md:flex  ">
-                <div className="w-full">
-                  <FormikInput
-                    type="text"
-                    label="Username"
-                    required={true}
-                    name="username"
-                  />
-                  <FormikInput
-                    type="email"
-                    label="Email"
-                    required={true}
-                    name="email"
-                  />
-                  <FormikInput
-                    type="password"
-                    label="Password"
-                    required={true}
-                    name="password"
-                  />
-                </div>
-
-                <div className=" md:w-1/2 w-full">
-                  <FormikFile
-                    name="avatar"
-                    label="Upload your image"
-                    required={true}
-                    setImagePreview={true} // Enable image preview
-                  />
-                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-4 justify-between px-4">
+
+              <div className="space-y-4">
+                <FormikInput
+                  type="text"
+                  name="username"
+                  label="Username"
+                  required
+                  placeholder="Enter your username"
+                />
+                <FormikInput
+                  type="email"
+                  name="email"
+                  label="Email"
+                  required
+                  placeholder="your@email.com"
+                />
+                <FormikInput
+                  type="password"
+                  name="password"
+                  label="Password"
+                  required
+                  placeholder="••••••••"
+                />
+                <FormikFile
+                  name="avatar"
+                  label="Profile Picture"
+                  accept="image/*"
+                />
+              </div>
+
               <button
                 type="submit"
-                className="border-black hover:bg-black hover:text-white border duration-200 w-full  py-1 bg-white text-black rounded-sm"
+                disabled={isSubmitting}
+                className={`w-full mt-6 py-2 px-4 rounded-md font-medium transition-colors
+                  ${isSubmitting
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-black text-white hover:bg-gray-800"}`}
               >
-                {isSubmitting ? "loading" : "Signup"}
+                {isSubmitting ? "Registering..." : "Register"}
               </button>
-            </div>
-          </Form>
-        </div>
-      )}
-    </Formik>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </div>
   );
 };
 

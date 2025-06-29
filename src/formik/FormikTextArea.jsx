@@ -7,7 +7,7 @@ const FormikTextarea = ({ name, label, required, rows = 4, ...props }) => {
       <Field name={name}>
         {({ field, form, meta }) => {
           return (
-            <div className="flex relative flex-col p-4">
+            <div className="flex relative flex-col ">
               <label
                 className="capitalize tracking-wide font-medium flex gap-2 text-gray-500"
                 htmlFor={name}

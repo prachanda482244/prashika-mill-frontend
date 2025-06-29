@@ -105,12 +105,15 @@ export const productValidationSchema = yup.object({
     .min(3, "Title should be more than 3 character")
     .required("Title is required"),
   price: yup.number().required("Price is required"),
-  quantity: yup.number().required("Quantity is required"),
+  stock: yup.number().required("Stock is required"),
   description: yup
     .string()
     .min(10, "Description should be 10 character long")
     .required("description is required"),
   image: yup.mixed(),
+  pricePerKg: yup.number().required("Price per kg is required"),
+  stockInKg: yup.number(),
+  kgPerUnit: yup.number()
 });
 export const blogValidationSchema = yup.object({
   title: yup
@@ -300,3 +303,9 @@ export const statusStyles = {
     textColor: "text-green-500",
   },
 };
+// constants/constants.js
+export const contactValidationSchema = yup.object().shape({
+  name: yup.string().required("Name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  message: yup.string().required("Message is required"),
+});

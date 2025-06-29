@@ -14,10 +14,10 @@ export const fetchCartData = createAsyncThunk("cart/item", async () => {
 
 export const addToCart = createAsyncThunk(
   "cart/add-to-cart",
-  async (productId, product) => {
+  async ({ productId, product, quantity, quantityInKg }) => {
     const { data } = await AxiosInstance.post(
-      `/cart/add-to-cart/${productId}`,
-      { product, quantity: 1 },
+      `/cart/p/${productId}`,
+      { product, quantity: quantity, quantityInKg: quantityInKg || 0 },
       { withCredentials: true }
     );
     return data.data;

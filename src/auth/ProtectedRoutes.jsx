@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoutes = ({ requiredRole = null }) => {
   const { role, isLoggedIn } = useSelector((state) => state.user);
-
+  console.log(role, "role")
   if (!isLoggedIn) {
     return <Navigate to="/sign-in" />;
   }

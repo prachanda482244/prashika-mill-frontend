@@ -13,121 +13,193 @@ import { fetchCartData } from "../store/slices/cartSlice";
 const Navbar = () => {
   const { isLoggedIn, userData } = useSelector((state) => state.user);
   const { cartItems, status } = useSelector((state) => state.cart);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleLogout = async () => {
     const { data } = await AxiosInstance.post("/users/logout", {});
     toast.success(data?.message);
     dispatch(logoutUser());
     navigate("/");
   };
+
   useEffect(() => {
     dispatch(fetchCartData());
   }, [status]);
 
   return (
-    <nav className="flex sm:flex-row py-2  flex-col lg:py-16  items-center lg:px-20 font-normal   w-full justify-between ">
-      <div className="flex flex-col justify-between md:flex-row p-2 w-full ">
-        {isOpen && (
-          <div className="flex mt-2 sm:mt-0 order-2 md:order-1 flex-col md:flex-row  sm:flex uppercase tracking-wide  items-center text-xs lg:text-base sm:w-full gap-5 md:w-1/2 lg:w-[70%]  lg:gap-10">
-            {navlinks_1?.map((link) => (
-              <NavLink
-                className={({ isActive }) =>
-                  `${isActive ? "text-teal-500" : ""} hover:text-teal-300`
-                }
-                key={link.id}
-                to={link.path}
-              >
-                {link.name}
-              </NavLink>
-            ))}
-          </div>
-        )}
+    <nav className="w-full bg-white shadow-sm">
+      {/* Top Bar - Logo and Mobile Menu Button */}
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        {/* Logo */}
+        <NavLink
+          className="border-2 md:border-4 font-medium text-sm md:text-base lg:text-xl px-2 py-1 md:px-3 md:py-2 border-black uppercase"
+          to="/"
+        >
+          Prashika Mil
+        </NavLink>
 
-        <div className="flex order-1 md:order-2  items-center w-full justify-between  md:gap-10">
-          <div>
+        {/* Desktop Navigation - Primary Links */}
+        <div className="hidden md:flex space-x-4 lg:space-x-8">
+          {navlinks_1?.map((link) => (
             <NavLink
-              className=" border-2 sm:border-4 font-medium sm:text-xs md:text-sm lg:text-xl px-1 py-2 border-black uppercase"
-              to="/"
+              className={({ isActive }) =>
+                `text-xs lg:text-base uppercase tracking-wide ${isActive ? "text-teal-500" : "text-gray-700"
+                } hover:text-teal-300`
+              }
+              key={link.id}
+              to={link.path}
             >
-              Prashika Mil
+              {link.name}
             </NavLink>
-          </div>
+          ))}
+        </div>
 
-          <div className="md:hidden">
+        {/* Mobile Menu Button */}
+        <div className="md:hidden flex items-center space-x-4">
+          {/* Mobile Search Icon - Could implement search functionality */}
+          <CiSearch className="h-5 w-5 cursor-pointer" />
+
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? (
+              <RxCross1 className="h-6 w-6" />
+            ) : (
+              <GiHamburgerMenu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Navigation - Secondary Links */}
+        <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
+          {/* Search Bar */}
+          <div className="relative hidden lg:block">
             <input
               type="text"
               placeholder="Search..."
-              className="w-20  border-b-2 sm:mr-8 border-black hover:border-2 outline-none sm:py-2 placeholder:text-black"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-40 border-b-2 border-black px-2 py-1 outline-none placeholder:text-gray-700"
             />
+            <CiSearch className="absolute right-2 top-2" />
           </div>
 
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? (
-                <RxCross1 className="h-7 w-7 cursor-pointer" />
-              ) : (
-                <GiHamburgerMenu className="h-7 w-7 cursor-pointer" />
-              )}
-            </button>
-          </div>
-
-          <div className="md:flex hidden relative items-center gap-2">
-            <ul className="sm:flex  sm:flex-row flex-col lg:gap-3 text-xs  lg:text-xl items-center ">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="lg:w-40 w-10  border-b-2 sm:mr-8 border-black px-8 hover:border-2 outline-none sm:py-2 placeholder:text-black"
-              />
-              <CiSearch className="absolute text-sm left-0 lg:text-2xl " />
-
-              {navlinks_2.map(
-                (link) =>
-                  link.isVisible(isLoggedIn) && (
+          {/* Account Links */}
+          <ul className="flex items-center space-x-4">
+            {navlinks_2.map(
+              (link) =>
+                link.isVisible(isLoggedIn) && (
+                  <li key={link.id}>
                     <NavLink
-                      key={link.id}
                       to={link.path}
                       className={({ isActive }) =>
-                        `${isActive ? "text-teal-500" : ""} 
-                       ${
-                         link.name === "profile" ? "uppercase" : ""
-                       } hover:text-teal-300 flex items-center gap-3 font-light tracking-wide`
+                        `flex items-center space-x-1 ${isActive ? "text-teal-500" : "text-gray-700"
+                        } hover:text-teal-300`
                       }
-                      onClick={link.id === 6 && handleLogout}
+                      onClick={link.id === 6 ? handleLogout : undefined}
                     >
                       <div className="relative">
-                        {link.name === "profile" ? (
-                          ""
-                        ) : (
+                        {link.name !== "profile" && (
                           <span
-                            className={` ${
-                              link.id !== 5
-                                ? "text-xs lg:text-xl"
-                                : "text-xs lg:text-xl  text-black"
-                            } flex items-center justify-center bg-gray-500 rounded-full text-white p-2 `}
+                            className={`inline-flex items-center justify-center rounded-full p-1 ${link.id === 5 ? "text-black" : "text-gray-700"
+                              }`}
                           >
-                            {<link.icons />}
+                            <link.icons className="h-4 w-4 lg:h-5 lg:w-5" />
                           </span>
                         )}
-                        {link.id === 5 ? (
-                          <span className="absolute text-xs  text-white h-5 w-5 text-center rounded-full top-7 font-bold left-5">
+                        {link.id === 5 && (
+                          <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-xs h-5 w-5 flex items-center justify-center rounded-full">
                             {cartItems ? cartItems?.products?.length : 0}
                           </span>
-                        ) : null}
+                        )}
                       </div>
-                      <span className="text-base">
+                      <span className="text-xs lg:text-sm">
                         {link.name === "profile"
                           ? userData?.username
                           : link.name}
                       </span>
                     </NavLink>
-                  )
-              )}
-            </ul>
-          </div>
+                  </li>
+                )
+            )}
+          </ul>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white py-4 px-4 border-t border-gray-200">
+          {/* Mobile Search */}
+          <div className="relative mb-4">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full border-b-2 border-black px-2 py-1 outline-none placeholder:text-gray-700"
+            />
+            <CiSearch className="absolute right-2 top-2" />
+          </div>
+
+          {/* Primary Links */}
+          <div className="flex flex-col space-y-3 mb-4">
+            {navlinks_1?.map((link) => (
+              <NavLink
+                className={({ isActive }) =>
+                  `text-sm uppercase tracking-wide py-1 ${isActive ? "text-teal-500" : "text-gray-700"
+                  } hover:text-teal-300`
+                }
+                key={link.id}
+                to={link.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.name}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Secondary Links */}
+          <div className="flex flex-col space-y-3">
+            {navlinks_2.map(
+              (link) =>
+                link.isVisible(isLoggedIn) && (
+                  <NavLink
+                    key={link.id}
+                    to={link.path}
+                    className={({ isActive }) =>
+                      `flex items-center space-x-2 py-1 ${isActive ? "text-teal-500" : "text-gray-700"
+                      } hover:text-teal-300`
+                    }
+                    onClick={() => {
+                      if (link.id === 6) handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <div className="relative">
+                      {link.name !== "profile" && (
+                        <span
+                          className={`inline-flex items-center justify-center rounded-full p-1 ${link.id === 5 ? "text-black" : "text-gray-700"
+                            }`}
+                        >
+                          <link.icons className="h-5 w-5" />
+                        </span>
+                      )}
+                      {link.id === 5 && (
+                        <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-xs h-5 w-5 flex items-center justify-center rounded-full">
+                          {cartItems ? cartItems?.products?.length : 0}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-sm">
+                      {link.name === "profile" ? userData?.username : link.name}
+                    </span>
+                  </NavLink>
+                )
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

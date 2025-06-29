@@ -1,98 +1,94 @@
 import { Form, Formik } from "formik";
-import React from "react";
-import FormikInput from "../formik/FormikInput";
-import { loginValidationSchema } from "../constants/constants";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AxiosInstance from "../config/AxiosInstance";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../store/slices/authSlice";
+import FormikInput from "../formik/FormikInput";
+import { loginValidationSchema } from "../constants/constants";
+
 const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const initialValues = {
-    email: "",
-    password: "",
-  };
 
   const formSubmit = async (values) => {
-    console.log(values);
     try {
       const { data } = await AxiosInstance.post("/users/login", values);
-      if (data.statusCode !== 200) return;
-      const userData = data.data;
-      const role = userData.role;
-      dispatch(loginUser({ userData, role }));
-      toast.success(data?.message);
+      dispatch(loginUser({ userData: data.data, role: data.data.role }));
+      toast.success("Login successful");
+      console.log(data?.data, "data ")
+      if (data?.data?.role === "admin") {
+        navigate("/dashboard/products")
+      } else {
+        navigate("/");
+      }
+
     } catch (error) {
-      toast.error("Invalid Credentials");
-      console.log(error.request.response);
+      toast.error(error.response?.data?.message || "Login failed");
     }
   };
+
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={loginValidationSchema}
-      onSubmit={formSubmit}
-      enableReinitialize={true}
-    >
-      {({ isSubmitting }) => {
-        return (
-          <div className="py-2 border  border-black mx-auto sm:w-1/2">
-            <Form className="  p-2">
-              <div className="flex flex-col gap-2">
-                <div>
-                  <h1 className="font-semibold flex justify-between items-center text-3xl px-2 capitalize border-b pb-2">
-                    Sign In
-                    <p className="text-sm flex gap-3 text-gray-500 ">
-                      Dont have an account ?{" "}
-                      <Link
-                        to="/sign-up"
-                        className="underline text-blue-500 hover:text-blue-300"
-                      >
-                        Signup
-                      </Link>
-                    </p>
-                  </h1>
-                </div>
-                <div>
-                  <FormikInput
-                    type="email"
-                    label="email"
-                    required={true}
-                    name="email"
-                  />
-                </div>
-                <div>
-                  <FormikInput
-                    type="password"
-                    label="password"
-                    required={true}
-                    name="password"
-                  />
-                </div>
+    <div className="max-w-md mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={loginValidationSchema}
+          onSubmit={formSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className="p-6">
+              <div className="flex justify-between items-center pb-4 mb-6 border-b">
+                <h1 className="text-2xl font-bold text-gray-800">Welcome Back</h1>
+                <p className="text-sm text-gray-600">
+                  New user?{" "}
+                  <Link to="/sign-up" className="text-blue-600 hover:underline">
+                    Sign up
+                  </Link>
+                </p>
               </div>
-              <div className="flex items-center gap-4 justify-between px-4">
-                <button
-                  type="submit"
-                  className="border-black hover:bg-white hover:text-black  border duration-200 w-full py-1 bg-black text-white rounded-sm"
+
+              <div className="space-y-4">
+                <FormikInput
+                  type="email"
+                  name="email"
+                  label="Email"
+                  required
+                  placeholder="your@email.com"
+                />
+                <FormikInput
+                  type="password"
+                  name="password"
+                  label="Password"
+                  required
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div className="flex justify-end mt-2">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-blue-600 hover:underline"
                 >
-                  {isSubmitting ? "loading" : "Sign in"}
-                </button>
+                  Forgot password?
+                </Link>
               </div>
-            </Form>
-            <div className="flex border-t pt-2 justify-center mt-2">
-              <Link
-                to="/forgot-password"
-                className="hover:text-blue-500 hover:underline"
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full mt-6 py-2 px-4 rounded-md font-medium transition-colors
+                  ${isSubmitting
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-black text-white hover:bg-gray-800"}`}
               >
-                Forgot password ?
-              </Link>
-            </div>
-          </div>
-        );
-      }}
-    </Formik>
+                {isSubmitting ? "Signing in..." : "Sign In"}
+              </button>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </div>
   );
 };
 

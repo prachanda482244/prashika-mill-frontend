@@ -1,220 +1,328 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import toast from "react-hot-toast";
-import {
-  fetchCartData,
-  removeFromCart,
-  updateCart,
-} from "../store/slices/cartSlice";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AxiosInstance from "../config/AxiosInstance";
+import toast from "react-hot-toast";
 
 const Cart = () => {
-  const { cartItems, message } = useSelector((state) => state.cart);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(false);
-  // Create a local state to manage quantities
-  const [localQuantities, setLocalQuantities] = useState({});
+  const shippingFee = 100;
+  const [cartItems, setCartItems] = useState([]);
+  const [editModes, setEditModes] = useState({});
+  const [inputValues, setInputValues] = useState({});
+  const [quantityTypes, setQuantityTypes] = useState({});
 
-  useEffect(() => {
-    const quantities = cartItems.products.reduce((acc, product) => {
-      acc[product.product._id] = product.quantity;
-      return acc;
-    }, {});
-    setLocalQuantities(quantities);
-    dispatch(fetchCartData());
-  }, []);
+  const getCartDetails = async () => {
+    try {
+      const { data } = await AxiosInstance.get('/cart');
+      setCartItems(data?.data);
 
-  const handleClearCart = () => {
-    const result = confirm("Are you sure you want to clear the cart..?");
-    if (!result) return;
-    // dispatch(clearCart());
-    toast.success("Cart cleared");
-    setRefresh(!refresh);
-  };
-
-  const handleRemove = (productId) => {
-    dispatch(removeFromCart(productId));
-    setRefresh(!refresh);
-  };
-
-  console.log(message, "mnessage");
-  const handleIncrement = (productId) => {
-    setLocalQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: prevQuantities[productId] + 1,
-    }));
-    let quantity = localQuantities[productId] + 1;
-    dispatch(updateCart({ productId, quantity }));
-    toast.success("Product quantity increased by 1");
-    setRefresh(!refresh);
-  };
-
-  const handleDecrement = (productId) => {
-    if (localQuantities[productId] > 1) {
-      setLocalQuantities((prevQuantities) => ({
-        ...prevQuantities,
-        [productId]: prevQuantities[productId] - 1,
-      }));
-
-      dispatch(
-        updateCart({ productId, quantity: localQuantities[productId] - 1 })
-      );
-      toast.success("Product quantity decreased by 1");
-
-      setRefresh(!refresh);
+      // Initialize quantity types based on initial data
+      const types = {};
+      data?.data?.products?.forEach(item => {
+        types[item.product._id] = item.quantityInKg > 0 ? 'kg' : 'quantity';
+      });
+      setQuantityTypes(types);
+    } catch (error) {
+      toast.error("Failed to load cart items");
     }
   };
-  const totalPrice = cartItems.products?.reduce((total, product) => {
-    return total + product.product.price * localQuantities[product.product._id];
-  }, 0);
+
+  useEffect(() => {
+    getCartDetails();
+  }, []);
+
+  const totalPrice = (cartItems?.totalAmount || 0) + shippingFee;
+
+  const handleRemove = async (product) => {
+    try {
+      const { data } = await AxiosInstance.delete(`/cart/p/${product?.product?._id}`);
+      setCartItems(data?.data);
+      toast.success("Item removed from cart");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to remove item");
+    }
+  };
+
+  const handleQuantityChange = async (product, newValue) => {
+    try {
+      const isKgMode = quantityTypes[product.product._id] === 'kg';
+
+      if (!newValue || newValue === 0) {
+        await handleRemove(product);
+        return;
+      }
+
+      const payload = isKgMode
+        ? { quantityInKg: +newValue, quantity: 0 }
+        : { quantity: +newValue, quantityInKg: 0 };
+
+      const { data } = await AxiosInstance.post(
+        `/cart/p/${product.product._id}`,
+        payload
+      );
+      setCartItems(data?.data);
+      setEditModes(prev => ({ ...prev, [product.product._id]: false }));
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update quantity");
+    }
+  };
+
+  const handleIncrement = async (product) => {
+    const isKgMode = quantityTypes[product.product._id] === 'kg';
+    const currentValue = isKgMode ? product.quantityInKg : product.quantity;
+    const newValue = currentValue + 1;
+    await handleQuantityChange(product, newValue);
+  };
+
+  const handleDecrement = async (product) => {
+    const isKgMode = quantityTypes[product.product._id] === 'kg';
+    const currentValue = isKgMode ? product.quantityInKg : product.quantity;
+    const newValue = Math.max(currentValue - 1, 1);
+    await handleQuantityChange(product, newValue);
+  };
+
+  const toggleEditMode = (productId, currentValue) => {
+    setEditModes(prev => ({ ...prev, [productId]: !prev[productId] }));
+    setInputValues(prev => ({ ...prev, [productId]: currentValue }));
+  };
+
+  const handleInputChange = (productId, value) => {
+    if (value === '' || /^[0-9\b]+$/.test(value)) {
+      setInputValues(prev => ({ ...prev, [productId]: value }));
+    }
+  };
 
   const handleCheckOut = () => {
-    if (cartItems.length === 0 || cartItems?.products.length === 0) {
-      toast.error("No item in cart to order");
+    if (!cartItems?.products?.length) {
+      toast.error("Your cart is empty");
     } else {
       navigate("/order");
     }
   };
 
-  useEffect(() => {
-    fetchCartData();
-  }, [refresh]);
+  const handleClearCart = async () => {
+    try {
+      if (window.confirm("Are you sure you want to clear your cart?")) {
+        await AxiosInstance.delete("/cart/clear-cart");
+        setCartItems([]);
+        toast.success("Cart cleared successfully");
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to clear cart");
+    }
+  };
+
+  const toggleQuantityType = (productId) => {
+    setQuantityTypes(prev => ({
+      ...prev,
+      [productId]: prev[productId] === 'kg' ? 'quantity' : 'kg'
+    }));
+  };
+
   return (
-    <div className="flex font-light  pt-10 w-[80%] mx-auto p-3 flex-col">
-      <div className="flex gap-16 ">
-        <div className="w-2/3">
-          <h1 className="text-xl border-b pb-2 font-semibold">My Cart</h1>
-          {cartItems.products && cartItems?.products?.length !== 0 ? (
-            cartItems?.products?.map((products) => (
-              <div
-                key={products.product._id}
-                className="flex  py-3 justify-between px-5"
-              >
-                <div>
-                  <div className="flex gap-4 w-72">
-                    <div className="bg-[#f5f5f0] py-10 px-5">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <h1 className="text-3xl font-light text-gray-800 mb-8">Your Shopping Cart</h1>
+
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Cart Items */}
+        <div className="lg:w-2/3">
+          {cartItems?.products?.length > 0 ? (
+            <div className="bg-white rounded-lg shadow-sm divide-y divide-gray-200">
+              {cartItems?.products?.map((item) => {
+                const productId = item?.product?._id;
+                const isKgMode = quantityTypes[productId] === 'kg';
+                const currentValue = isKgMode ? item.quantityInKg : item.quantity;
+                const stock = isKgMode ? item.product.stockInKg : item.product.stock;
+                const price = isKgMode ? item.product.pricePerKg : item.product.price;
+                const isEditMode = editModes[productId];
+
+                return (
+                  <div key={productId} className="p-6 flex flex-col sm:flex-row gap-6">
+                    <div className="flex-shrink-0">
                       <img
-                        src={
-                          products.product.images &&
-                          products.product?.images[0].url
-                        }
-                        alt="Cart item"
-                        className="h-14 w-14 object-cover rounded-sm"
+                        src={item?.product?.images?.[0]?.url}
+                        alt={item?.product?.title}
+                        className="w-24 h-24 object-contain"
                       />
                     </div>
-                    <div className="flex py-2 flex-col justify-between text-sm font-light">
-                      <div className="flex flex-col gap-2">
-                        <p className="text-lg tracking-wider">
-                          {products.product.title}
-                        </p>
-                        <p className="text-sm">Rs:{products.product.price}</p>
-                      </div>
-                      <p>In stock</p>
-                    </div>
-                  </div>
-                </div>
-                <div className=" flex flex-col">
-                  <div className="flex border border-black items-center w-28 justify-between p-1">
-                    <button
-                      className=" text-5xl text-slate-900"
-                      onClick={() => handleDecrement(products.product._id)}
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        width="24"
-                        height="24"
-                        class="sXYm0Ry"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M20,12 L20,13 L5,13 L5,12 L20,12 Z"
-                        ></path>
-                      </svg>
-                    </button>
-                    <div>
-                      <span className=" text-black text-lg ">
-                        {localQuantities[products.product._id]}
-                      </span>
-                    </div>
-                    <button
-                      className="text-black  "
-                      onClick={() => handleIncrement(products.product._id)}
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        width="24"
-                        height="24"
-                        class="sXYm0Ry"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M13,5 L13,12 L20,12 L20,13 L13,13 L13,20 L12,20 L11.999,13 L5,13 L5,12 L12,12 L12,5 L13,5 Z"
-                        ></path>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
 
-                <div className="flex flex-col gap-2 justify-between  ">
-                  <p className="text-lg">
-                    Rs:
-                    {localQuantities[products.product._id] *
-                      products.product.price}
-                    .00
-                  </p>
-                </div>
-                <div>
-                  <button onClick={() => handleRemove(products.product._id)}>
-                    <svg
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      width="30"
-                      height="30"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M11.5,3 C12.327,3 13,3.673 13,4.5 L13,4.5 L13,5 L16,5 L16,6 L15,6 L15,14.5 C15,15.878 13.878,17 12.5,17 L12.5,17 L7.5,17 C6.122,17 5,15.878 5,14.5 L5,14.5 L5,6 L4,6 L4,5 L7,5 L7,4.5 C7,3.673 7.673,3 8.5,3 L8.5,3 Z M14,6 L6,6 L6,14.5 C6,15.327 6.673,16 7.5,16 L7.5,16 L12.5,16 C13.327,16 14,15.327 14,14.5 L14,14.5 L14,6 Z M9,8 L9,14 L8,14 L8,8 L9,8 Z M12,8.001 L12,14 L11,14 L11,8.001 L12,8.001 Z M11.5,4 L8.5,4 C8.224,4 8,4.224 8,4.5 L8,4.5 L8,5 L12,5 L12,4.5 C12,4.224 11.776,4 11.5,4 L11.5,4 Z"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <h3 className="text-lg font-medium text-gray-900">
+                          {item?.product.title}
+                        </h3>
+                        <p className="text-lg font-semibold text-amber-600">
+                          Rs. {price}
+                        </p>
+                      </div>
+
+                      <div className="mt-2 flex items-center gap-4">
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => toggleQuantityType(productId)}
+                            className={`px-3 py-1 text-sm rounded-md transition-colors ${quantityTypes[productId] === 'quantity'
+                                ? "bg-amber-500 text-white"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              }`}
+                          >
+                            Quantity
+                          </button>
+                          <button
+                            onClick={() => toggleQuantityType(productId)}
+                            className={`px-3 py-1 text-sm rounded-md transition-colors ${quantityTypes[productId] === 'kg'
+                                ? "bg-amber-500 text-white"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              }`}
+                          >
+                            Kg
+                          </button>
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          Stock: {stock} {isKgMode ? 'kg' : ''}
+                        </span>
+                      </div>
+
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {isEditMode ? (
+                            <>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                min="1"
+                                max={stock}
+                                value={inputValues[productId] ?? ''}
+                                onChange={(e) => handleInputChange(productId, e.target.value)}
+                                className="w-20 px-3 py-1 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                                autoFocus
+                              />
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => handleQuantityChange(
+                                    item,
+                                    inputValues[productId] || 1
+                                  )}
+                                  className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() => toggleEditMode(productId, currentValue)}
+                                  className="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="flex items-center border border-gray-300 rounded-md">
+                                <button
+                                  onClick={() => handleDecrement(item)}
+                                  className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                                  disabled={currentValue <= 1}
+                                >
+                                  -
+                                </button>
+                                <span
+                                  className="px-4 py-1 cursor-pointer min-w-[40px] text-center"
+                                  onClick={() => toggleEditMode(productId, currentValue)}
+                                >
+                                  {currentValue}
+                                </span>
+                                <button
+                                  onClick={() => handleIncrement(item)}
+                                  className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                                  disabled={currentValue >= stock}
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        <button
+                          onClick={() => handleRemove(item)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              <div className="px-6 py-4 flex justify-end">
+                <button
+                  onClick={handleClearCart}
+                  className="text-sm text-red-500 hover:text-red-700"
+                >
+                  Clear Cart
+                </button>
               </div>
-            ))
+            </div>
           ) : (
-            <div className=" mt-2 text-lg">
-              No items in the cart{" "}
+            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Your cart is empty</h3>
               <button
                 onClick={() => navigate("/products")}
-                className="text-blue-400"
+                className="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600"
               >
-                Shop now
+                Continue Shopping
               </button>
             </div>
           )}
         </div>
 
-        <div className="flex flex-col gap-5 w-1/3 mx-auto ">
-          <h1 className="text-xl font-light border-b pb-2">Order Summary</h1>
-          <div className="flex py-2 justify-between border-b-[2px]">
-            <p>Total</p>
-            <p>{totalPrice}</p>
+        {/* Order Summary */}
+        {cartItems?.products?.length > 0 && (
+          <div className="lg:w-1/3">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
+
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="font-medium">Rs. {cartItems?.totalAmount?.toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Shipping</span>
+                  <span className="font-medium">Rs. {shippingFee.toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tax</span>
+                  <span className="font-medium">Rs. 0</span>
+                </div>
+
+                <div className="border-t border-gray-200 pt-4 flex justify-between">
+                  <span className="text-lg font-medium">Total</span>
+                  <span className="text-lg font-bold text-amber-600">Rs. {totalPrice.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleCheckOut}
+                className="mt-6 w-full bg-amber-500 py-3 px-4 border border-transparent rounded-md shadow-sm text-white font-medium hover:bg-amber-600 focus:outline-none"
+              >
+                Proceed to Checkout
+              </button>
+            </div>
+
+            <div className="mt-4 bg-white rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Need Help?</h3>
+              <p className="text-sm text-gray-600">
+                Contact us at <span className="text-amber-500">support@example.com</span> or call <span className="text-amber-500">+977 9860115454</span>
+              </p>
+            </div>
           </div>
-          <div className="flex py-2 justify-between border-b-[2px]">
-            <p>Total order</p>
-            <p>{cartItems.products?.length}</p>
-          </div>
-          <div>
-            <button
-              onClick={handleCheckOut}
-              className="bg-[#5e5e4a] disabled:bg-[#636331] text-white py-2 w-full px-6"
-            >
-              Checkout
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

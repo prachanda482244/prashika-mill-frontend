@@ -22,6 +22,10 @@ import MostPopular from "./pages/MostPopular";
 import DashboardOrder from "./dashboard/components/DashboardOrder";
 import DashboardOrderDetails from "./dashboard/pages/DashboardOrderDetails";
 import ProfileSettings from "./pages/ProfileSettings";
+import Contact from "./pages/Contact";
+import Blog from "./pages/Blog";
+import OurStory from "./pages/OurStory";
+import OrderSuccess from "./pages/OrderSuccess";
 
 const App = () => {
   const location = useLocation();
@@ -44,9 +48,9 @@ const App = () => {
 
         {/* Unprotected routes */}
         <Route path="/unauthorized" element={<div>Unauthorized</div>} />
-        <Route path="/blog" element={<div>Blog</div>} />
-        <Route path="/about" element={<div>Our Story</div>} />
-        <Route path="/contact" element={<div>Contact Form</div>} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/about" element={<OurStory />} />
+        <Route path="/contact" element={<Contact />} />
         <Route
           path="/forgot-password/:token"
           element={<div>Forgot Password</div>}
@@ -58,6 +62,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/settings" element={<ProfileSettings />} />
           <Route path="/order" element={<Order />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
         </Route>
 
         {/* Protected routes for admin users */}
